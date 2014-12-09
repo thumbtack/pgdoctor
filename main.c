@@ -39,7 +39,7 @@ int answer_to_connection(void *cls,
 	check_result = run_health_checks(configuration, check_text);
 	create_html_page(page, check_text);
 	status_code = check_result == 1 ? 200 : 500;
-	logger_write(LOG_NOTICE, "All checks ran successfully");
+	logger_write(LOG_NOTICE, "Health check result: %u %s\n", status_code, check_text);
     }
 
     /* prepare the HTTP response and send it to the client */

@@ -6,6 +6,8 @@ OBJECTS = $(filter-out main.o,$(patsubst %.c,%.o,$(wildcard *.c)))
 OTHER = strconst.h
 BIN = pgdoctor
 BIN_TEST = $(BIN)_test
+CFG_FILE = $(BIN).cfg
+PREFIX = /usr/bin
 
 ifdef DEBUG
 CFLAGS += -DDEBUG -g
@@ -18,6 +20,14 @@ $(BIN): main.c $(OBJECTS)
 
 %.o: %.c %.h $(OTHER)
 	$(CC) -c $(CFLAGS) $< -o $@
+
+install: $(BIN)
+	install -m 0755 $(BIN) $(PREFIX)
+	install -m 0600 $(CFG_FILE) /etc
+
+uninstall:
+	rm -f $(PREFIX)/$(BIN)
+	rm -f /etc/$(CFG_FILE)
 
 clean:
 	rm -fr $(BIN) *.o

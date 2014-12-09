@@ -29,7 +29,7 @@ static struct {
 
 /* remove comments and whitespace (in-place) from a line in the
  * configuration file */
-void sanitize_str(char *str)
+extern void sanitize_str(char *str)
 {
     char *ignore_after, *start_from = str;
     int length;

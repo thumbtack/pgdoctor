@@ -37,9 +37,9 @@ typedef struct config {
 #define CFG_REPLICATION_LAG(X) (X->replication_lag)
 #define CFG_CUSTOM_CHECK(X) (X->custom_check)
 
-void sanitize_str(char *str);
-config_t config_parse(const char *file_path);
-void config_cleanup(config_t config);
+extern void sanitize_str(char *str);
+extern config_t config_parse(const char *file_path);
+extern void config_cleanup(config_t config);
 extern void config_show(config_t config);
 
 

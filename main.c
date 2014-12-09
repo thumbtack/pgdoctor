@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 #include <libpq-fe.h>
 #include <microhttpd.h>
 #include "config_parser.h"
@@ -7,6 +8,10 @@
 #include "health_check.h"
 #include "run_checks.h"
 #include "strconst.h"
+
+
+/* used to signal stop; is updated by the SIGTERM handler */
+int glbl_stop = 0;
 
 
 void create_html_page(char *page, char *body)
@@ -50,9 +55,23 @@ int answer_to_connection(void *cls,
     return ret;
 }
 
+void graceful_shutdown(int sig)
+{
+    /* just change the global variable; there are no race conditions
+     * so this will safely break the loop in main() */
+    glbl_stop = 1;
+}
+
 int main(int argc, char *argv[])
 {
     struct MHD_Daemon *http_daemon;
+    struct timeval tv;
+    struct timeval *tvp;
+    fd_set rs;
+    fd_set ws;
+    fd_set es;
+    int max;
+    unsigned MHD_LONG_LONG mhd_timeout;
     config_t config;
 
     /* parse configuration file */
@@ -65,6 +84,10 @@ int main(int argc, char *argv[])
     /* setup the logger */
     logger_open(config);
 
+    /* setup a signal handler to break the daemon loop and cleanup
+     * nicely on SIGTERM */
+    signal(SIGTERM, graceful_shutdown);
+
     /* run daemon */
     http_daemon = MHD_start_daemon(MHD_USE_SELECT_INTERNALLY,
 				   CFG_HTTP_PORT(config), NULL, NULL,
@@ -75,11 +98,32 @@ int main(int argc, char *argv[])
 	return 1;
     }
 
-    getchar();
+    /* never terminates (other than by signals, such as CTRL-C). */
+    while (! glbl_stop) {
+	max = 0;
+	FD_ZERO(&rs);
+	FD_ZERO(&ws);
+	FD_ZERO(&es);
+	if (MHD_get_fdset(http_daemon, &rs, &ws, &es, &max) != MHD_YES) {
+	    /* fatal internal error */
+	    logger_write(LOG_CRIT, "Failed to obtain select() sets\n");
+	    break;
+	}
+	if (MHD_get_timeout(http_daemon, &mhd_timeout) == MHD_YES) {
+	    tv.tv_sec = mhd_timeout / 1000;
+	    tv.tv_usec = (mhd_timeout - (tv.tv_sec * 1000)) * 1000;
+	    tvp = &tv;
+	}
+	else
+	    tvp = NULL;
+	select(max + 1, &rs, &ws, &es, tvp);
+	MHD_run(http_daemon);
+    }
 
     /* cleanup */
     MHD_stop_daemon(http_daemon);
     logger_close();
     config_cleanup(config);
+
     return 0;
 }

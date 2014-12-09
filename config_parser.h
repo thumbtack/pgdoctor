@@ -4,7 +4,6 @@
 
 #include "health_check.h"
 
-
 typedef struct checks_list {
     health_check_t check;
     struct checks_list *next;

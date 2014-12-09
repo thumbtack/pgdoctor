@@ -4,6 +4,7 @@
 #include <strings.h>
 #include <syslog.h>
 #include <stdarg.h>
+#include "logger.h"
 #include "config_parser.h"
 
 

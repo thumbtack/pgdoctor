@@ -10,23 +10,6 @@
 #include "strconst.h"
 
 
-/* map strings from the configuration file to equivalent constants */
-#define MK_CONFIG_LIST(f) \
-    f(HTTP_PORT) f(SYSLOG_FACILITY) f(PG_HOST) f(PG_PORT) f(PG_USER) \
-    f(PG_PASSWORD) f(PG_DATABASE) f(PG_CONNECTION_TIMEOUT) \
-    f(PG_MAX_REPLICATION_LAG) f(HEALTH_CHECK)
-#define N_CONFIG_PARAMS 10
-#define MK_CONFIG_PAIR(X) {X, #X},
-#define MK_CONFIG_ENUM(X) X,
-
-typedef enum { MK_CONFIG_LIST(MK_CONFIG_ENUM) } config_option_t;
-
-static struct {
-    int param_const;
-    char * param_str;
-} glb_config_param[] = { MK_CONFIG_LIST(MK_CONFIG_PAIR) };
-
-
 /* remove comments and whitespace (in-place) from a line in the
  * configuration file */
 extern void sanitize_str(char *str)
@@ -76,10 +59,14 @@ void parse_line(char *param, char *value, char *op, const char *line)
 static int get_param_type(const char *str)
 {
     int i;
+    static struct {
+	int param_const;
+	char * param_str;
+    } config_param[] = { MK_CONFIG_LIST(MK_CONFIG_PAIR) };
 
     for (i = 0; i < N_CONFIG_PARAMS; i++) {
-	if (strcasecmp(str, glb_config_param[i].param_str) == 0)
-	    return glb_config_param[i].param_const;
+	if (strcasecmp(str, config_param[i].param_str) == 0)
+	    return config_param[i].param_const;
     }
 
     /* if everything else failed, let's assume it's a custom health

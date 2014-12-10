@@ -1,32 +1,32 @@
 #include <check.h>
 #include <stdlib.h>
 #include "../strconst.h"
-#include "../health_check.h"
+#include "../custom_check.h"
 #include "../config_parser.h"
 
 START_TEST(test_check_type)
 {
-    health_check_t check;
+    custom_check_t check;
     char *q1 = "select count(*) from usr_users", *q2 = "select 1";
     char *v1 = "4", *v2 = "5";
     char *op1 = "", *op2 = "=";
 
     /* initialize a data struture and make sure it works */
-    check = health_check_create(q1, v1, op1);
-    ck_assert_str_eq(HEALTH_CHECK_QUERY(check), q1);
-    ck_assert_str_eq(HEALTH_CHECK_RESULT(check), v1);
-    ck_assert_str_eq(HEALTH_CHECK_OPERATOR(check), op1);
+    check = custom_check_create(q1, v1, op1);
+    ck_assert_str_eq(CUSTOM_CHECK_QUERY(check), q1);
+    ck_assert_str_eq(CUSTOM_CHECK_RESULT(check), v1);
+    ck_assert_str_eq(CUSTOM_CHECK_OPERATOR(check), op1);
 
     /* change the data type and make sure it succedeed */
-    health_check_set_query(check, q2);
-    health_check_set_result(check, v2);
-    health_check_set_operator(check, op2);
-    ck_assert_str_eq(HEALTH_CHECK_QUERY(check), q2);
-    ck_assert_str_eq(HEALTH_CHECK_RESULT(check), v2);
-    ck_assert_str_eq(HEALTH_CHECK_OPERATOR(check), op2);
+    custom_check_set_query(check, q2);
+    custom_check_set_result(check, v2);
+    custom_check_set_operator(check, op2);
+    ck_assert_str_eq(CUSTOM_CHECK_QUERY(check), q2);
+    ck_assert_str_eq(CUSTOM_CHECK_RESULT(check), v2);
+    ck_assert_str_eq(CUSTOM_CHECK_OPERATOR(check), op2);
 
     /* make sure to cleanup */
-    health_check_destroy(check);
+    custom_check_destroy(check);
 }
 END_TEST
 

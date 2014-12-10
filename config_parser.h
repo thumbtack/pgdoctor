@@ -2,7 +2,7 @@
 #define CONFIG_PARSER_H_
 
 
-#include "health_check.h"
+#include "custom_check.h"
 
 /* map strings from the configuration file to equivalent constants */
 #define MK_CONFIG_LIST(f) \
@@ -16,7 +16,7 @@
 typedef enum { MK_CONFIG_LIST(MK_CONFIG_ENUM) } config_option_t;
 
 typedef struct checks_list {
-    health_check_t check;
+    custom_check_t check;
     struct checks_list *next;
 } *checks_list_t;
 

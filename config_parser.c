@@ -45,7 +45,7 @@ extern void sanitize_str(char *str)
  * operator, and expected value and load them into the proper data
  * structure; if there is no value to compare to, `value` and `op`
  * will be set to an empty string */
-static health_check_t parse_custom_check(const char *line)
+static custom_check_t parse_custom_check(const char *line)
 {
     char *query, *operator, *op, *delim = "\"", buf[MAX_STR_CFG];
 
@@ -58,10 +58,10 @@ static health_check_t parse_custom_check(const char *line)
 	op = strtok(NULL, delim);
 	if (! op)
 	    return NULL;
-	return health_check_create(query, operator, op);
+	return custom_check_create(query, operator, op);
     }
     else
-	return health_check_create(query, "", "");
+	return custom_check_create(query, "", "");
 }
 
 static int get_param_type(const char *str)
@@ -103,7 +103,7 @@ static void load_str(char **str, char *value)
     }
 }
 
-static int append_custom_check(config_t config, health_check_t custom_check)
+static int append_custom_check(config_t config, custom_check_t custom_check)
 {
     checks_list_t checks_list=CFG_CUSTOM_CHECKS(config), new_check;
 
@@ -130,7 +130,7 @@ static int load_parameter(config_t config, const char *line)
 {
     char *param, *value, *delim = "=", buf[MAX_STR_CFG];
     int param_type;
-    health_check_t custom_check;
+    custom_check_t custom_check;
 
     /* strtok changes the original string, which we may not be
      * expecting at other points of the program */
@@ -228,13 +228,13 @@ extern void config_cleanup(config_t config)
 
 static void show_custom_checks(checks_list_t current_check)
 {
-    health_check_t check;
+    custom_check_t check;
 
     while (current_check) {
 	check = CHECKS_LIST_CHECK(current_check);
-	printf("%s\n", HEALTH_CHECK_QUERY(check));
-	printf("\t%s\n", HEALTH_CHECK_RESULT(check));
-	printf("\t%s\n", HEALTH_CHECK_OPERATOR(check));
+	printf("%s\n", CUSTOM_CHECK_QUERY(check));
+	printf("\t%s\n", CUSTOM_CHECK_RESULT(check));
+	printf("\t%s\n", CUSTOM_CHECK_OPERATOR(check));
 	current_check = CHECKS_LIST_NEXT(current_check);
     }
 }

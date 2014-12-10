@@ -5,7 +5,6 @@
 #include <microhttpd.h>
 #include "config_parser.h"
 #include "logger.h"
-#include "health_check.h"
 #include "run_checks.h"
 #include "strconst.h"
 

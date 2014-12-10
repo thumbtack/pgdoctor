@@ -33,7 +33,6 @@ static void set_check_parameter(char **param, char *value)
     if (*param) {
 	strcpy(*param, value);
     }
-
 }
 
 extern void custom_check_set_query(custom_check_t check, char *query)

@@ -1,5 +1,5 @@
-#ifndef STRCONST_H
-#define STRCONST_H
+#ifndef STRCONST_H_
+#define STRCONST_H_
 
 
 #define MAX_STR 128
@@ -23,4 +23,4 @@
 #define COMMENT_CHR '#'
 
 
-#endif
+#endif /* STRCONST_H_ */

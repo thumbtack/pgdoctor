@@ -1,5 +1,5 @@
-#ifndef LOGGER_H
-#define LOGGER_H
+#ifndef LOGGER_H_
+#define LOGGER_H_
 
 
 #include <syslog.h>
@@ -10,4 +10,4 @@ extern void logger_write(int priority, const char *fmt, ...);
 extern void logger_close();
 
 
-#endif
+#endif /* LOGGER_H_ */

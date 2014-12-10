@@ -71,7 +71,7 @@ static int get_param_type(const char *str)
 
     /* if everything else failed, let's assume it's a custom health
      * check */
-    return HEALTH_CHECK;
+    return CUSTOM_CHECK;
 }
 
 static void load_int(int *i, char *value)
@@ -107,7 +107,7 @@ static int load_parameter(config_t config, const char *line)
     /* make sure there are no spaces */
     sanitize_str(param);
     param_type = get_param_type(param);
-    if (param_type == HEALTH_CHECK) {
+    if (param_type == CUSTOM_CHECK) {
 	return 1;
     }
     else {

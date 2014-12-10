@@ -12,9 +12,9 @@ typedef struct custom_check {
 #define CUSTOM_CHECK_RESULT(X) (X->expected_result)
 #define CUSTOM_CHECK_OPERATOR(X) (X->relop)
 
-extern custom_check_t custom_check_create(char *query, char *result, char *operator);
+extern custom_check_t custom_check_create(char *query, char *result, char *op);
 extern void custom_check_set_query(custom_check_t check, char *query);
-extern void custom_check_set_result(custom_check_t check, char *expected_result);
+extern void custom_check_set_result(custom_check_t check, char *result);
 extern void custom_check_set_operator(custom_check_t check, char *relop);
 extern void custom_check_destroy(custom_check_t check);
 

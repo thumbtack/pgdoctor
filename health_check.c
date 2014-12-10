@@ -1,8 +1,8 @@
+#include "health_check.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "health_check.h"
-
+#include "logger.h"
 
 extern health_check_t health_check_create(char *query, char *expected_result, char *operator)
 {
@@ -21,9 +21,8 @@ extern health_check_t health_check_create(char *query, char *expected_result, ch
 	    strcpy(HEALTH_CHECK_OPERATOR(check), operator);
 	}
     }
-    else {
-	/* log it */
-    }
+    else
+	logger_write(LOG_CRIT, "%m");
 
     return check;
 }

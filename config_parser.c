@@ -95,9 +95,10 @@ static void load_str(char **str, char *value)
     }
 }
 
-static void load_parameter(config_t config, const char *line)
+static int load_parameter(config_t config, const char *line)
 {
     char *param, *value, *delim = "=", buf[MAX_STR_CFG];
+    int param_type;
 
     /* strtok changes the original string, which we may not be
      * expecting at other points of the program */
@@ -105,49 +106,45 @@ static void load_parameter(config_t config, const char *line)
     param = strtok(buf, delim);
     /* make sure there are no spaces */
     sanitize_str(param);
-    switch(get_param_type(param))
-    {
-    case HTTP_PORT:
-	value = strtok(NULL, delim);
-	load_int(&CFG_HTTP_PORT(config), value);
-    	break;
-    case PG_PORT:
-	value = strtok(NULL, delim);
-	load_int(&CFG_PG_PORT(config), value);
-    	break;
-    case PG_CONNECTION_TIMEOUT:
-	value = strtok(NULL, delim);
-	load_int(&CFG_PG_TIMEOUT(config), value);
-    	break;
-    case PG_MAX_REPLICATION_LAG:
-	value = strtok(NULL, delim);
-	load_int(&CFG_REPLICATION_LAG(config), value);
-    	break;
-    case SYSLOG_FACILITY:
-    	value = strtok(NULL, delim);
-	load_str(&CFG_SYSLOG_FACILITY(config), value);
-    	break;
-    case PG_HOST:
-    	value = strtok(NULL, delim);
-	load_str(&CFG_PG_HOST(config), value);
-    	break;
-    case PG_USER:
-    	value = strtok(NULL, delim);
-	load_str(&CFG_PG_USER(config), value);
-    	break;
-    case PG_PASSWORD:
-    	value = strtok(NULL, delim);
-	load_str(&CFG_PG_PASSWORD(config), value);
-    	break;
-    case PG_DATABASE:
-    	value = strtok(NULL, delim);
-	load_str(&CFG_PG_DATABASE(config), value);
-    	break;
-    case HEALTH_CHECK:
-    default:
-	break;
+    param_type = get_param_type(param);
+    if (param_type == HEALTH_CHECK) {
+	return 1;
     }
-
+    else {
+	value = strtok(NULL, delim);
+	switch(param_type)
+	{
+	case HTTP_PORT:
+	    load_int(&CFG_HTTP_PORT(config), value);
+	    return 1;
+	case PG_PORT:
+	    load_int(&CFG_PG_PORT(config), value);
+	    return 1;
+	case PG_CONNECTION_TIMEOUT:
+	    load_int(&CFG_PG_TIMEOUT(config), value);
+	    return 1;
+	case PG_MAX_REPLICATION_LAG:
+	    load_int(&CFG_REPLICATION_LAG(config), value);
+	    return 1;
+	case SYSLOG_FACILITY:
+	    load_str(&CFG_SYSLOG_FACILITY(config), value);
+	    return 1;
+	case PG_HOST:
+	    load_str(&CFG_PG_HOST(config), value);
+	    return 1;
+	case PG_USER:
+	    load_str(&CFG_PG_USER(config), value);
+	    return 1;
+	case PG_PASSWORD:
+	    load_str(&CFG_PG_PASSWORD(config), value);
+	    return 1;
+	case PG_DATABASE:
+	    load_str(&CFG_PG_DATABASE(config), value);
+	    return 1;
+	default:
+	    return 0;
+	}
+    }
 }
 
 extern config_t config_parse(const char *file_path)
@@ -170,7 +167,10 @@ extern config_t config_parse(const char *file_path)
     while (fgets(line, sizeof(line), fp)) {
     	sanitize_str(line);
     	if (strcmp(line, "") != 0) {
-    	    load_parameter(config, line);
+    	    if (! load_parameter(config, line)) {
+		logger_write(LOG_CRIT, "Failed to parse line '%s'\n", line);
+		return NULL;
+	    }
     	}
     }
 

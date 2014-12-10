@@ -1,3 +1,4 @@
+#include "config_parser.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,7 +6,6 @@
 #include <ctype.h>
 #include <errno.h>
 #include <libpq-fe.h>
-#include "config_parser.h"
 #include "logger.h"
 #include "strconst.h"
 
@@ -41,19 +41,27 @@ extern void sanitize_str(char *str)
     str[length+1] = '\0';
 }
 
-/* parse a (sanitized) line, extract and load the parameter,
- * respective value, and possible relational operator (in the case of
- * SQL checks) into `param`/`value`/`op`; `op` will be set to an
- * empty string */
-void parse_line(char *param, char *value, char *op, const char *line)
+/* parse a (sanitized) line with a custom check; extract the query,
+ * operator, and expected value and load them into the proper data
+ * structure; if there is no value to compare to, `value` and `op`
+ * will be set to an empty string */
+static health_check_t parse_custom_check(const char *line)
 {
-    /* char *assign = strchr(line, '='); */
+    char *query, *operator, *op, *delim = "\"", buf[MAX_STR_CFG];
 
-    /* /\* this line is a custom SQL query *\/ */
-    /* if (! assign) */
-    /* 	return NULL; */
-
-
+    strcpy(buf, line);
+    query = strtok(buf, delim);
+    if (! query)
+	return NULL;
+    operator = strtok(NULL, delim);
+    if (operator) {
+	op = strtok(NULL, delim);
+	if (! op)
+	    return NULL;
+	return health_check_create(query, operator, op);
+    }
+    else
+	return health_check_create(query, "", "");
 }
 
 static int get_param_type(const char *str)
@@ -95,10 +103,34 @@ static void load_str(char **str, char *value)
     }
 }
 
+static int append_custom_check(config_t config, health_check_t custom_check)
+{
+    checks_list_t checks_list=CFG_CUSTOM_CHECKS(config), new_check;
+
+    new_check = malloc(sizeof(struct checks_list));
+    if (! new_check) {
+	logger_write(LOG_CRIT, "%m\n");
+	return 0;
+    }
+    CHECKS_LIST_CHECK(new_check) = custom_check;
+    CHECKS_LIST_NEXT(new_check) = NULL;
+
+    if (! checks_list)
+	CFG_CUSTOM_CHECKS(config) = new_check;
+    else {
+	while (CHECKS_LIST_NEXT(checks_list)++)
+	    ;
+	CHECKS_LIST_NEXT(checks_list) = new_check;
+    }
+
+    return 1;
+}
+
 static int load_parameter(config_t config, const char *line)
 {
     char *param, *value, *delim = "=", buf[MAX_STR_CFG];
     int param_type;
+    health_check_t custom_check;
 
     /* strtok changes the original string, which we may not be
      * expecting at other points of the program */
@@ -108,7 +140,10 @@ static int load_parameter(config_t config, const char *line)
     sanitize_str(param);
     param_type = get_param_type(param);
     if (param_type == CUSTOM_CHECK) {
-	return 1;
+	if ((custom_check=parse_custom_check(line)))
+	    return append_custom_check(config, custom_check);
+	else
+	    return 0;
     }
     else {
 	value = strtok(NULL, delim);
@@ -164,13 +199,16 @@ extern config_t config_parse(const char *file_path)
 	return NULL;
     }
 
+    CFG_CUSTOM_CHECKS(config) = NULL;
     while (fgets(line, sizeof(line), fp)) {
     	sanitize_str(line);
     	if (strcmp(line, "") != 0) {
     	    if (! load_parameter(config, line)) {
-		logger_write(LOG_CRIT, "Failed to parse line '%s'\n", line);
+		logger_write(LOG_CRIT, STR_CFG_PARSE_ERROR, line);
 		return NULL;
 	    }
+	    else
+		logger_write(LOG_INFO, "%s\n", line);
     	}
     }
 
@@ -184,7 +222,21 @@ extern void config_cleanup(config_t config)
     free(CFG_PG_USER(config));
     free(CFG_PG_PASSWORD(config));
     free(CFG_PG_DATABASE(config));
+    /* TODO: free() custom checks */
     free(config);
+}
+
+static void show_custom_checks(checks_list_t current_check)
+{
+    health_check_t check;
+
+    while (current_check) {
+	check = CHECKS_LIST_CHECK(current_check);
+	printf("%s\n", HEALTH_CHECK_QUERY(check));
+	printf("\t%s\n", HEALTH_CHECK_RESULT(check));
+	printf("\t%s\n", HEALTH_CHECK_OPERATOR(check));
+	current_check = CHECKS_LIST_NEXT(current_check);
+    }
 }
 
 extern void config_show(config_t config)
@@ -198,4 +250,5 @@ extern void config_show(config_t config)
     printf("pg_database: %s\n", CFG_PG_DATABASE(config));
     printf("pg_connection_timeout: %d\n", CFG_PG_TIMEOUT(config));
     printf("pg_max_replication_lag: %d\n", CFG_REPLICATION_LAG(config));
+    show_custom_checks(CFG_CUSTOM_CHECKS(config));
 }

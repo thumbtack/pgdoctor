@@ -18,6 +18,7 @@
 #define STR_OK "OK"
 #define STR_NO_REPLICATION_INFO "Unknown replication state"
 #define STR_BAD_REQUEST "Bad request"
+#define STR_CFG_PARSE_ERROR "Failed to parse line '%s'\n"
 
 #define COMMENT_CHR '#'
 

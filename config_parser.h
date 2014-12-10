@@ -1,5 +1,5 @@
-#ifndef CONFIG_PARSER_H
-#define CONFIG_PARSER_H
+#ifndef CONFIG_PARSER_H_
+#define CONFIG_PARSER_H_
 
 
 #include "health_check.h"
@@ -18,7 +18,7 @@ typedef enum { MK_CONFIG_LIST(MK_CONFIG_ENUM) } config_option_t;
 typedef struct checks_list {
     health_check_t check;
     struct checks_list *next;
-} *t_checks_list;
+} *checks_list_t;
 
 typedef struct config {
     int http_port;
@@ -30,9 +30,11 @@ typedef struct config {
     char *database;
     int connection_timeout;
     int replication_lag;
-    t_checks_list checks;
+    checks_list_t custom_checks;
 } *config_t;
 
+#define CHECKS_LIST_CHECK(X) (X->check)
+#define CHECKS_LIST_NEXT(X) (X->next)
 
 /* a bit of an overkill since this really isn't an abstract data type,
  * but the definition has changed so many times that these macros just
@@ -46,7 +48,7 @@ typedef struct config {
 #define CFG_PG_DATABASE(X) (X->database)
 #define CFG_PG_TIMEOUT(X) (X->connection_timeout)
 #define CFG_REPLICATION_LAG(X) (X->replication_lag)
-#define CFG_CUSTOM_CHECK(X) (X->custom_check)
+#define CFG_CUSTOM_CHECKS(X) (X->custom_checks)
 
 extern void sanitize_str(char *str);
 extern config_t config_parse(const char *file_path);
@@ -54,4 +56,4 @@ extern void config_cleanup(config_t config);
 extern void config_show(config_t config);
 
 
-#endif
+#endif /* CONFIG_PARSER_H_ */

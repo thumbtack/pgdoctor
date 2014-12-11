@@ -20,6 +20,7 @@
 #define STR_HTML_FMT "<html><body>%s</body></html>"
 #define STR_OK "OK"
 #define STR_NO_REPLICATION_INFO "Unknown replication state"
+#define STR_QUERY_FAILED "Failed to execute query '%s'"
 #define STR_BAD_REQUEST "Bad request"
 #define STR_CFG_PARSE_ERROR "Failed to parse line '%s'\n"
 

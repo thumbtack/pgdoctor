@@ -40,7 +40,7 @@ int answer_to_connection(void *cls,
 	logger_write(LOG_ERR, "Bad request: method=%s, URL=%s\n", method, url);
     }
     else {
-	check_result = run_health_checks(configuration, check_text);
+	check_result = run_health_checks(configuration, check_text, MAX_STR);
 	create_html_page(page, check_text);
 	status_code = check_result == 1 ? 200 : 500;
 	logger_write(LOG_NOTICE, "Health check result: %u %s\n", status_code, check_text);

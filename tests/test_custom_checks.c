@@ -84,6 +84,20 @@ START_TEST(test_run_checks)
 }
 END_TEST
 
+START_TEST(test_failed_run_checks)
+{
+    char result[MAX_STR];
+    config_t config;
+
+    config = config_parse("tests/pgdoctor_fails.cfg");
+
+    ck_assert_int_eq(run_health_checks(config, result, MAX_STR), 0);
+
+    /* make sure to cleanup */
+    config_cleanup(config);
+}
+END_TEST
+
 int main(void)
 {
 
@@ -96,6 +110,7 @@ int main(void)
     tcase_add_test(tc1_1, test_custom_check);
     tcase_add_test(tc1_1, test_configparser);
     tcase_add_test(tc1_1, test_run_checks);
+    tcase_add_test(tc1_1, test_failed_run_checks);
 
     srunner_run_all(sr, CK_NORMAL);
     nf = srunner_ntests_failed(sr);

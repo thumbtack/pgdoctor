@@ -13,7 +13,7 @@ START_TEST(test_custom_check)
     char *op1 = "", *op2 = "=";
 
     /* initialize a data struture and make sure it works */
-    check = custom_check_create(q1, v1, op1);
+    check = custom_check_create(q1, op1, v1);
     ck_assert_str_eq(CUSTOM_CHECK_QUERY(check), q1);
     ck_assert_str_eq(CUSTOM_CHECK_RESULT(check), v1);
     ck_assert_str_eq(CUSTOM_CHECK_OPERATOR(check), op1);

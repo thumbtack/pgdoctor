@@ -24,6 +24,9 @@
 #define STR_BAD_REQUEST "Bad request"
 #define STR_CFG_PARSE_ERROR "Failed to parse line '%s'\n"
 #define STR_CFG_PARSE_SUCCESS "Successfully parsed line '%s'\n"
+#define STR_DB_CONNECTION_ERROR "Failed to connect to the database\n"
+#define STR_RUN_CHECK_ERROR "Failed to run check '%s'\n"
+#define STR_RUN_CHECK_SUCCESS "Successfully ran check '%s'\n"
 
 #define COMMENT_CHR '#'
 

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <libpq-fe.h>
 #include "config_parser.h"
+#include "logger.h"
 #include "strconst.h"
 
 
@@ -100,8 +101,12 @@ static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
 
     while (CHECKS_LIST_NEXT(checks_list)) {
 	check = CHECKS_LIST_CHECK(checks_list);
-	if (! run_custom_check(pg_conn, check, result, size))
+	if (! run_custom_check(pg_conn, check, result, size)) {
+	    logger_write(LOG_ERR, STR_RUN_CHECK_ERROR, CUSTOM_CHECK_QUERY(check));
 	    return 0;
+	} else {
+	    logger_write(LOG_INFO, STR_RUN_CHECK_SUCCESS, CUSTOM_CHECK_QUERY(check));
+	}
 	checks_list = CHECKS_LIST_NEXT(checks_list);
     }
 
@@ -116,6 +121,7 @@ extern int run_health_checks(config_t config, char *result, size_t size)
 {
     /* connection strings: format and actual string to be created */
     char pg_conn_str[MAX_STR];
+    int success = 1;
     PGconn *pg_conn;
 
     /* create the connection string from the set of parameters */
@@ -132,27 +138,26 @@ extern int run_health_checks(config_t config, char *result, size_t size)
     /* check successful connection or return error right now */
     pg_conn = PQconnectdb(pg_conn_str);
     if (PQstatus(pg_conn) != CONNECTION_OK) {
+	logger_write(LOG_CRIT, STR_DB_CONNECTION_ERROR);
     	pg_fail(pg_conn, result, size);
-    	return 0;
+    	success = 0;
     }
 
     /* check replication lag */
     if (CFG_REPLICATION_LAG(config) >= 0) {
 	if (! check_replication_lag(pg_conn, config, result)) {
-	    PQfinish(pg_conn);
-	    return 0;
+	    logger_write(LOG_ERR, STR_RUN_CHECK_ERROR, "replication lag");
+	    success = 0;
 	}
     }
 
     /* run the custom checks */
     if (! run_all_checks(pg_conn, CFG_CUSTOM_CHECKS(config), result, size))
-	return 0;
+	success = 0;
 
+    if (success)
+	strcpy(result, STR_OK);
 
-    /* if we made it this far no check failed; kill the database
-     * connection, write something nice to the result string, and
-     * return */
     PQfinish(pg_conn);
-    strcpy(result, STR_OK);
     return 1;
 }

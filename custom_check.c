@@ -4,7 +4,8 @@
 #include <stdlib.h>
 #include "logger.h"
 
-extern custom_check_t custom_check_create(char *query, char *expected_result, char *operator)
+extern custom_check_t custom_check_create(char *query, char *operator,
+					  char *expected_result)
 {
     custom_check_t check = malloc(sizeof(custom_check_t));
 

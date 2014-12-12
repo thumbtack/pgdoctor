@@ -58,6 +58,8 @@ static custom_check_t parse_custom_check(const char *line)
 	expected = strtok(NULL, delim);
 	if (! expected)
 	    return NULL;
+	sanitize_str(operator);
+	sanitize_str(expected);
 	return custom_check_create(query, operator, expected);
     } else {
 	return custom_check_create(query, "", "");

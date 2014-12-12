@@ -17,7 +17,7 @@ static void pg_fail(PGconn *pg_conn, char *result, size_t size)
     /* if there one, save the error message from PG to `result` and
      * gracefully terminate the DB connection */
     if (errormsg)
-	snprintf(result, size, "%s", errormsg);
+    	snprintf(result, size, "%s", errormsg);
 }
 
 static int check_replication_lag(PGconn *pg_conn, config_t config, char *result)
@@ -65,7 +65,8 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
     /* without a result set there's no point on proceeding */
     if (PQresultStatus(pg_result) != PGRES_TUPLES_OK) {
 	pg_fail(pg_conn, result, size);
-    	success = 0;
+	PQclear(pg_result);
+    	return 0;
     }
 
     /* we only expect one field with one result */
@@ -75,7 +76,8 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
      * the check fails */
     if (strlen(query_result) == 0) {
 	snprintf(result, size, STR_QUERY_FAILED, CUSTOM_CHECK_QUERY(check));
-	success = 0;
+	PQclear(pg_result);
+	return 0;
     }
 
     /* compare the query's result with the expected value */
@@ -121,7 +123,6 @@ extern int run_health_checks(config_t config, char *result, size_t size)
 {
     /* connection strings: format and actual string to be created */
     char pg_conn_str[MAX_STR];
-    int success = 1;
     PGconn *pg_conn;
 
     /* create the connection string from the set of parameters */
@@ -140,24 +141,26 @@ extern int run_health_checks(config_t config, char *result, size_t size)
     if (PQstatus(pg_conn) != CONNECTION_OK) {
 	logger_write(LOG_CRIT, STR_DB_CONNECTION_ERROR);
     	pg_fail(pg_conn, result, size);
-    	success = 0;
+	PQfinish(pg_conn);
+    	return 0;
     }
 
     /* check replication lag */
     if (CFG_REPLICATION_LAG(config) >= 0) {
 	if (! check_replication_lag(pg_conn, config, result)) {
 	    logger_write(LOG_ERR, STR_RUN_CHECK_ERROR, "replication lag");
-	    success = 0;
+	    PQfinish(pg_conn);
+	    return 0;
 	}
     }
 
     /* run the custom checks */
-    if (! run_all_checks(pg_conn, CFG_CUSTOM_CHECKS(config), result, size))
-	success = 0;
+    if (! run_all_checks(pg_conn, CFG_CUSTOM_CHECKS(config), result, size)) {
+	PQfinish(pg_conn);
+	return 0;
+    }
 
-    if (success)
-	strcpy(result, STR_OK);
-
+    strcpy(result, STR_OK);
     PQfinish(pg_conn);
     return 1;
 }

@@ -85,10 +85,10 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
     if (strcmp(CUSTOM_CHECK_OPERATOR(check), "="))
 	success = (strcmp(query_result, CUSTOM_CHECK_RESULT(check)) == 0);
     /* < and > compare as floating point values */
-    if (strcmp(CUSTOM_CHECK_OPERATOR(check), "<"))
+    if (strcmp(CUSTOM_CHECK_OPERATOR(check), "<") == 0)
 	success = (atof(query_result) < atof(CUSTOM_CHECK_RESULT(check)));
-    if (strcmp(CUSTOM_CHECK_OPERATOR(check), ">"))
-	success = (atof(query_result) > atof(CUSTOM_CHECK_RESULT(check)));
+    if (strcmp(CUSTOM_CHECK_OPERATOR(check), ">") == 0)
+    	success = (atof(query_result) > atof(CUSTOM_CHECK_RESULT(check)));
 
     /* at this point there is an integer for the replication lag; fail
      * iff it is greater than the specified limit */
@@ -104,10 +104,16 @@ static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
     while (checks_list) {
 	check = CHECKS_LIST_CHECK(checks_list);
 	if (! run_custom_check(pg_conn, check, result, size)) {
-	    logger_write(LOG_ERR, STR_RUN_CHECK_ERROR, CUSTOM_CHECK_QUERY(check));
+	    logger_write(LOG_ERR, STR_RUN_CHECK_ERROR,
+			 CUSTOM_CHECK_QUERY(check),
+			 CUSTOM_CHECK_OPERATOR(check),
+			 CUSTOM_CHECK_RESULT(check));
 	    return 0;
 	} else {
-	    logger_write(LOG_INFO, STR_RUN_CHECK_SUCCESS, CUSTOM_CHECK_QUERY(check));
+	    logger_write(LOG_INFO, STR_RUN_CHECK_SUCCESS,
+			 CUSTOM_CHECK_QUERY(check),
+			 CUSTOM_CHECK_OPERATOR(check),
+			 CUSTOM_CHECK_RESULT(check));
 	}
 	checks_list = CHECKS_LIST_NEXT(checks_list);
     }
@@ -148,7 +154,7 @@ extern int run_health_checks(config_t config, char *result, size_t size)
     /* check replication lag */
     if (CFG_REPLICATION_LAG(config) >= 0) {
 	if (! check_replication_lag(pg_conn, config, result)) {
-	    logger_write(LOG_ERR, STR_RUN_CHECK_ERROR, "replication lag");
+	    logger_write(LOG_ERR, STR_RUN_CHECK_ERROR, "replication lag", "", "");
 	    PQfinish(pg_conn);
 	    return 0;
 	}

@@ -99,7 +99,7 @@ static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
 {
     custom_check_t check;
 
-    while (CHECKS_LIST_NEXT(checks_list)) {
+    while (checks_list) {
 	check = CHECKS_LIST_CHECK(checks_list);
 	if (! run_custom_check(pg_conn, check, result, size)) {
 	    logger_write(LOG_ERR, STR_RUN_CHECK_ERROR, CUSTOM_CHECK_QUERY(check));

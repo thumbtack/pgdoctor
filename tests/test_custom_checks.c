@@ -3,8 +3,9 @@
 #include "../strconst.h"
 #include "../custom_check.h"
 #include "../config_parser.h"
+#include "../run_checks.h"
 
-START_TEST(test_check_type)
+START_TEST(test_custom_check)
 {
     custom_check_t check;
     char *q1 = "select count(*) from usr_users", *q2 = "select 1";
@@ -69,6 +70,20 @@ START_TEST(test_configparser)
 }
 END_TEST
 
+START_TEST(test_run_checks)
+{
+    char result[MAX_STR];
+    config_t config;
+
+    config = config_parse("tests/pgdoctor.cfg");
+
+    ck_assert_int_eq(run_health_checks(config, result, MAX_STR), 1);
+
+    /* make sure to cleanup */
+    config_cleanup(config);
+}
+END_TEST
+
 int main(void)
 {
 
@@ -78,8 +93,9 @@ int main(void)
     int nf;
 
     suite_add_tcase(s1, tc1_1);
-    tcase_add_test(tc1_1, test_check_type);
+    tcase_add_test(tc1_1, test_custom_check);
     tcase_add_test(tc1_1, test_configparser);
+    tcase_add_test(tc1_1, test_run_checks);
 
     srunner_run_all(sr, CK_NORMAL);
     nf = srunner_ntests_failed(sr);

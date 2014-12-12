@@ -208,7 +208,7 @@ extern config_t config_parse(const char *file_path)
 		return NULL;
 	    }
 	    else
-		logger_write(LOG_INFO, "%s\n", line);
+		logger_write(LOG_INFO, STR_CFG_PARSE_SUCCESS, line);
     	}
     }
 

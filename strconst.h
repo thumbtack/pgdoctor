@@ -23,6 +23,7 @@
 #define STR_QUERY_FAILED "Failed to execute query '%s'"
 #define STR_BAD_REQUEST "Bad request"
 #define STR_CFG_PARSE_ERROR "Failed to parse line '%s'\n"
+#define STR_CFG_PARSE_SUCCESS "Successfully parsed line '%s'\n"
 
 #define COMMENT_CHR '#'
 

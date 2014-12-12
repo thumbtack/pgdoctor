@@ -82,7 +82,7 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
 
     /* compare the query's result with the expected value */
     /* = compares as a string */
-    if (strcmp(CUSTOM_CHECK_OPERATOR(check), "="))
+    if (strcmp(CUSTOM_CHECK_OPERATOR(check), "=") == 0)
 	success = (strcmp(query_result, CUSTOM_CHECK_RESULT(check)) == 0);
     /* < and > compare as floating point values */
     if (strcmp(CUSTOM_CHECK_OPERATOR(check), "<") == 0)

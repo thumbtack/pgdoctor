@@ -2,5 +2,3 @@
 * Replace all hardcoded strings with #define statements on strconst.h
 * Write tests for edge cases of config_parser
 * Make the replication lag check a particular case of the custom checks list
-* Test the custom health checks
-* Add logging for each check failure/success

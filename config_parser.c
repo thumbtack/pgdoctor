@@ -47,7 +47,7 @@ extern void sanitize_str(char *str)
  * will be set to an empty string */
 static custom_check_t parse_custom_check(const char *line)
 {
-    char *query, *operator, *op, *delim = "\"", buf[MAX_STR_CFG];
+    char *query, *operator, *expected, *delim = "\"", buf[MAX_STR_CFG];
 
     strcpy(buf, line);
     query = strtok(buf, delim);
@@ -55,13 +55,13 @@ static custom_check_t parse_custom_check(const char *line)
 	return NULL;
     operator = strtok(NULL, delim);
     if (operator) {
-	op = strtok(NULL, delim);
-	if (! op)
+	expected = strtok(NULL, delim);
+	if (! expected)
 	    return NULL;
-	return custom_check_create(query, operator, op);
-    }
-    else
+	return custom_check_create(query, operator, expected);
+    } else {
 	return custom_check_create(query, "", "");
+    }
 }
 
 static int get_param_type(const char *str)
@@ -118,8 +118,8 @@ static int append_custom_check(config_t config, custom_check_t custom_check)
     if (! checks_list)
 	CFG_CUSTOM_CHECKS(config) = new_check;
     else {
-	while (CHECKS_LIST_NEXT(checks_list)++)
-	    ;
+	while (CHECKS_LIST_NEXT(checks_list))
+	    checks_list = CHECKS_LIST_NEXT(checks_list);
 	CHECKS_LIST_NEXT(checks_list) = new_check;
     }
 
@@ -144,8 +144,7 @@ static int load_parameter(config_t config, const char *line)
 	    return append_custom_check(config, custom_check);
 	else
 	    return 0;
-    }
-    else {
+    } else {
 	value = strtok(NULL, delim);
 	switch(param_type)
 	{
@@ -232,9 +231,9 @@ static void show_custom_checks(checks_list_t current_check)
 
     while (current_check) {
 	check = CHECKS_LIST_CHECK(current_check);
-	printf("%s\n", CUSTOM_CHECK_QUERY(check));
-	printf("\t%s\n", CUSTOM_CHECK_RESULT(check));
-	printf("\t%s\n", CUSTOM_CHECK_OPERATOR(check));
+	printf("%s : %s : %s\n", CUSTOM_CHECK_QUERY(check),
+	       CUSTOM_CHECK_RESULT(check),
+	       CUSTOM_CHECK_OPERATOR(check));
 	current_check = CHECKS_LIST_NEXT(current_check);
     }
 }

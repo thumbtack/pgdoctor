@@ -1,3 +1,4 @@
+#define _BSD_SOURCE
 #include "custom_check.h"
 #include <stdio.h>
 #include <string.h>
@@ -11,19 +12,17 @@ extern custom_check_t custom_check_create(char *query, char *operator,
 
 
     if (check) {
-	CUSTOM_CHECK_QUERY(check) = malloc(strlen(query)+1);
-	CUSTOM_CHECK_RESULT(check) = malloc(strlen(expected_result)+1);
-	CUSTOM_CHECK_OPERATOR(check) = malloc(strlen(operator)+1);
-	if (CUSTOM_CHECK_QUERY(check) &&
-	    CUSTOM_CHECK_RESULT(check) &&
-	    CUSTOM_CHECK_OPERATOR(check)) {
-	    strcpy(CUSTOM_CHECK_QUERY(check), query);
-	    strcpy(CUSTOM_CHECK_RESULT(check), expected_result);
-	    strcpy(CUSTOM_CHECK_OPERATOR(check), operator);
+	CUSTOM_CHECK_QUERY(check) = strdup(query);
+	CUSTOM_CHECK_RESULT(check) = strdup(expected_result);
+	CUSTOM_CHECK_OPERATOR(check) = strdup(operator);
+	if (! (CUSTOM_CHECK_QUERY(check) &&
+	       CUSTOM_CHECK_RESULT(check) &&
+	       CUSTOM_CHECK_OPERATOR(check))) {
+	    logger_write(LOG_CRIT, "%m");
 	}
-    }
-    else
+    } else {
 	logger_write(LOG_CRIT, "%m");
+    }
 
     return check;
 }

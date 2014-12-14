@@ -99,7 +99,7 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
 static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
 			  char *result, size_t size)
 {
-    int failed = 0;
+    int success = 1;
     custom_check_t check;
 
     while (checks_list) {
@@ -110,7 +110,7 @@ static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
 			 CUSTOM_CHECK_OPERATOR(check),
 			 CUSTOM_CHECK_RESULT(check));
 	} else {
-	    failed = 1;
+	    success = 0;
 	    logger_write(LOG_ERR, STR_HEALTH_CHECK_ERROR_FMT,
 			 CUSTOM_CHECK_QUERY(check),
 			 CUSTOM_CHECK_OPERATOR(check),
@@ -119,7 +119,7 @@ static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
 	checks_list = CHECKS_LIST_NEXT(checks_list);
     }
 
-    return failed;
+    return success;
 }
 
 /* top level health check: connects to the DB and runs all checks */

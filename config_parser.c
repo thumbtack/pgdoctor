@@ -205,11 +205,11 @@ extern config_t config_parse(const char *file_path)
     	sanitize_str(line);
     	if (strcmp(line, "") != 0) {
     	    if (! load_parameter(config, line)) {
-		logger_write(LOG_CRIT, STR_CFG_PARSE_ERROR, line);
+		logger_write(LOG_CRIT, STR_CFG_PARSE_ERROR_FMT, line);
 		return NULL;
 	    }
 	    else
-		logger_write(LOG_INFO, STR_CFG_PARSE_SUCCESS, line);
+		logger_write(LOG_INFO, STR_CFG_PARSE_SUCCESS_FMT, line);
     	}
     }
 

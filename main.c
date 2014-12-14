@@ -13,9 +13,9 @@
 int glbl_stop = 0;
 
 
-void create_html_page(char *page, char *body)
+void create_html_page(char *page, size_t size, const char *body)
 {
-    snprintf(page, MAX_STR_HTML, STR_HTML_FMT, body);
+    snprintf(page, size, STR_HTML_RESPONSE_FMT, body);
 }
 
 int answer_to_connection(void *cls,
@@ -34,20 +34,25 @@ int answer_to_connection(void *cls,
     config_t configuration = (config_t)cls;
 
     /* unless the request is a simple GET to /, just ignore it */
-    if ((strcmp(method, "GET") != 0) || (strcmp(url, "/") != 0)) {
-	create_html_page(page, STR_BAD_REQUEST);
-	status_code = 400;
-	logger_write(LOG_ERR, "Bad request: method=%s, URL=%s\n", method, url);
-    }
-    else {
-	check_result = run_health_checks(configuration, check_text, MAX_STR);
-	create_html_page(page, check_text);
+    if ((strcmp(method, "GET") == 0) && (strcmp(url, "/") == 0)) {
+	check_result = run_health_checks(configuration,
+					 check_text,
+					 sizeof(check_text));
 	status_code = check_result == 1 ? 200 : 500;
-	logger_write(LOG_NOTICE, "Health check result: %u %s\n", status_code, check_text);
+	create_html_page(page, sizeof(page), check_text);
+	logger_write(LOG_NOTICE, STR_HTTP_RESPONSE_FMT,
+		     status_code, check_text);
+    } else {
+	snprintf(check_text, sizeof(check_text),
+		 STR_BAD_REQUEST_FMT, method, url);
+	status_code = 400;
+	create_html_page(page, sizeof(page), check_text);
+	logger_write(LOG_ERR, check_text);
     }
 
     /* prepare the HTTP response and send it to the client */
-    response = MHD_create_response_from_buffer(strlen(page), (void*)page, MHD_RESPMEM_MUST_COPY);
+    response = MHD_create_response_from_buffer(strlen(page), (void*)page,
+					       MHD_RESPMEM_MUST_COPY);
     ret = MHD_queue_response(connection, status_code, response);
     MHD_destroy_response(response);
 

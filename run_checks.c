@@ -75,7 +75,7 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
     /* an empty string means that there is nothing to compare to, so
      * the check fails */
     if (strlen(query_result) == 0) {
-	snprintf(result, size, STR_QUERY_FAILED, CUSTOM_CHECK_QUERY(check));
+	snprintf(result, size, STR_QUERY_FAILED_FMT, CUSTOM_CHECK_QUERY(check));
 	PQclear(pg_result);
 	return 0;
     }
@@ -104,13 +104,13 @@ static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
     while (checks_list) {
 	check = CHECKS_LIST_CHECK(checks_list);
 	if (! run_custom_check(pg_conn, check, result, size)) {
-	    logger_write(LOG_ERR, STR_RUN_CHECK_ERROR,
+	    logger_write(LOG_ERR, STR_HEALTH_CHECK_ERROR_FMT,
 			 CUSTOM_CHECK_QUERY(check),
 			 CUSTOM_CHECK_OPERATOR(check),
 			 CUSTOM_CHECK_RESULT(check));
 	    return 0;
 	} else {
-	    logger_write(LOG_INFO, STR_RUN_CHECK_SUCCESS,
+	    logger_write(LOG_INFO, STR_HEALTH_CHECK_SUCCESS_FMT,
 			 CUSTOM_CHECK_QUERY(check),
 			 CUSTOM_CHECK_OPERATOR(check),
 			 CUSTOM_CHECK_RESULT(check));
@@ -154,7 +154,7 @@ extern int run_health_checks(config_t config, char *result, size_t size)
     /* check replication lag */
     if (CFG_REPLICATION_LAG(config) >= 0) {
 	if (! check_replication_lag(pg_conn, config, result)) {
-	    logger_write(LOG_ERR, STR_RUN_CHECK_ERROR, "replication lag", "", "");
+	    logger_write(LOG_ERR, STR_HEALTH_CHECK_ERROR_FMT, "replication lag", "", "");
 	    PQfinish(pg_conn);
 	    return 0;
 	}
@@ -166,7 +166,7 @@ extern int run_health_checks(config_t config, char *result, size_t size)
 	return 0;
     }
 
-    strcpy(result, STR_OK);
+    strcpy(result, STR_ALL_CHECKS_SUCCESSFUL);
     PQfinish(pg_conn);
     return 1;
 }

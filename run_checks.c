@@ -99,18 +99,19 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
 static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
 			  char *result, size_t size)
 {
+    int failed = 0;
     custom_check_t check;
 
     while (checks_list) {
 	check = CHECKS_LIST_CHECK(checks_list);
-	if (! run_custom_check(pg_conn, check, result, size)) {
-	    logger_write(LOG_ERR, STR_HEALTH_CHECK_ERROR_FMT,
+	if (run_custom_check(pg_conn, check, result, size)) {
+	    logger_write(LOG_INFO, STR_HEALTH_CHECK_SUCCESS_FMT,
 			 CUSTOM_CHECK_QUERY(check),
 			 CUSTOM_CHECK_OPERATOR(check),
 			 CUSTOM_CHECK_RESULT(check));
-	    return 0;
 	} else {
-	    logger_write(LOG_INFO, STR_HEALTH_CHECK_SUCCESS_FMT,
+	    failed = 1;
+	    logger_write(LOG_ERR, STR_HEALTH_CHECK_ERROR_FMT,
 			 CUSTOM_CHECK_QUERY(check),
 			 CUSTOM_CHECK_OPERATOR(check),
 			 CUSTOM_CHECK_RESULT(check));
@@ -118,7 +119,7 @@ static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
 	checks_list = CHECKS_LIST_NEXT(checks_list);
     }
 
-    return 1;
+    return failed;
 }
 
 /* top level health check: connects to the DB and runs all checks */

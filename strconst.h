@@ -27,8 +27,8 @@
 #define STR_CFG_PARSE_ERROR_FMT "Failed to parse line '%s'\n"
 #define STR_CFG_PARSE_SUCCESS_FMT "Successfully parsed line '%s'\n"
 #define STR_DB_CONNECTION_ERROR "Failed to connect to the database\n"
-#define STR_HEALTH_CHECK_ERROR_FMT "Failed to run check '%s %s %s'\n"
-#define STR_HEALTH_CHECK_SUCCESS_FMT "Successfully ran check '%s %s %s'\n"
+#define STR_HEALTH_CHECK_ERROR_FMT "Check failed: '%s %s %s'\n"
+#define STR_HEALTH_CHECK_SUCCESS_FMT "Check succeeded: '%s %s %s'\n"
 #define STR_ALL_CHECKS_SUCCESSFUL "OK"
 
 

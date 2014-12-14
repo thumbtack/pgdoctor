@@ -7,7 +7,7 @@
 extern custom_check_t custom_check_create(char *query, char *operator,
 					  char *expected_result)
 {
-    custom_check_t check = malloc(sizeof(custom_check_t));
+    custom_check_t check = malloc(sizeof(struct custom_check));
 
 
     if (check) {

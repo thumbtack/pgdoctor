@@ -133,7 +133,7 @@ extern int run_health_checks(config_t config, char *result, size_t size)
 
     /* create the connection string from the set of parameters */
     snprintf(pg_conn_str,
-	     MAX_STR,
+	     sizeof(pg_conn_str),
 	     STR_PG_CONN_INFO_FMT,
 	     CFG_PG_HOST(config),
 	     CFG_PG_PORT(config),

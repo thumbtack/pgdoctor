@@ -57,8 +57,13 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
     if (strcmp(CUSTOM_CHECK_OPERATOR(check), ">") == 0)
     	success = (atof(query_result) > atof(CUSTOM_CHECK_RESULT(check)));
 
-    /* at this point there is an integer for the replication lag; fail
-     * iff it is greater than the specified limit */
+    /* make sure the error message is written to the result string */
+    if (! success)
+	snprintf(result, size, STR_HEALTH_CHECK_ERROR_FMT,
+		 CUSTOM_CHECK_QUERY(check),
+		 CUSTOM_CHECK_OPERATOR(check),
+		 CUSTOM_CHECK_RESULT(check));
+
     PQclear(pg_result);
     return success;
 }

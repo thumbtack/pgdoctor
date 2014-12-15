@@ -63,7 +63,6 @@ START_TEST(test_configparser)
     ck_assert_str_eq(CFG_PG_PASSWORD(config), "");
     ck_assert_str_eq(CFG_PG_DATABASE(config), "postgres");
     ck_assert_int_eq(CFG_PG_TIMEOUT(config), 3);
-    ck_assert_int_eq(CFG_REPLICATION_LAG(config), -1);
 
     /* make sure to cleanup */
     config_cleanup(config);

@@ -29,7 +29,6 @@ typedef struct config {
     char *password;
     char *database;
     int connection_timeout;
-    int replication_lag;
     checks_list_t custom_checks;
 } *config_t;
 
@@ -47,7 +46,6 @@ typedef struct config {
 #define CFG_PG_PASSWORD(X) (X->password)
 #define CFG_PG_DATABASE(X) (X->database)
 #define CFG_PG_TIMEOUT(X) (X->connection_timeout)
-#define CFG_REPLICATION_LAG(X) (X->replication_lag)
 #define CFG_CUSTOM_CHECKS(X) (X->custom_checks)
 
 extern void sanitize_str(char *str);

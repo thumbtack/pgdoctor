@@ -20,39 +20,6 @@ static void pg_fail(PGconn *pg_conn, char *result, size_t size)
     	snprintf(result, size, "%s", errormsg);
 }
 
-static int check_replication_lag(PGconn *pg_conn, config_t config, char *result)
-{
-    PGresult *pg_result;
-    char *lag;
-
-    pg_result = PQexec(pg_conn, STR_REPLICATION_LAG_QUERY);
-
-    /* without a result set there's no point on proceeding */
-    if (PQresultStatus(pg_result) != PGRES_TUPLES_OK) {
-	PQclear(pg_result);
-    	return 0;
-    }
-
-    /* we only expect one field with one result */
-    lag = PQgetvalue(pg_result, 0, 0);
-
-    /* an empty string means that there is no record of the last
-     * transaction log replay, but if we got this far it means that
-     * the check was enabled so it should fail */
-    if (strlen(lag) == 0) {
-	/* there is no error on the PG side, so lets just set `result`
-	 * here */
-	strcpy(result, STR_NO_REPLICATION_INFO);
-	PQclear(pg_result);
-	return 0;
-    }
-
-    /* at this point there is an integer for the replication lag; fail
-     * iff it is greater than the specified limit */
-    PQclear(pg_result);
-    return atoi(lag) <= CFG_REPLICATION_LAG(config);
-}
-
 static int run_custom_check(PGconn *pg_conn, custom_check_t check,
 			    char *result, size_t size)
 {
@@ -150,15 +117,6 @@ extern int run_health_checks(config_t config, char *result, size_t size)
     	pg_fail(pg_conn, result, size);
 	PQfinish(pg_conn);
     	return 0;
-    }
-
-    /* check replication lag */
-    if (CFG_REPLICATION_LAG(config) >= 0) {
-	if (! check_replication_lag(pg_conn, config, result)) {
-	    logger_write(LOG_ERR, STR_HEALTH_CHECK_ERROR_FMT, "replication lag", "", "");
-	    PQfinish(pg_conn);
-	    return 0;
-	}
     }
 
     /* run the custom checks */

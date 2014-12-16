@@ -27,7 +27,7 @@ extern custom_check_t custom_check_create(char *query, char *operator,
     return check;
 }
 
-static void set_check_parameter(char **param, char *value)
+static void set_check_parameter(char **param, const char *value)
 {
     *param = realloc(*param, strlen(value)+1);
     if (*param) {

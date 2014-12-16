@@ -1,3 +1,4 @@
+#define _BSD_SOURCE
 #include "config_parser.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,7 +50,7 @@ static custom_check_t parse_custom_check(const char *line)
 {
     char *query, *operator, *expected, *delim = "\"", buf[MAX_STR_CFG];
 
-    strcpy(buf, line);
+    snprintf(buf, sizeof(buf), "%s", line);
     query = strtok(buf, delim);
     if (! query)
 	return NULL;
@@ -94,14 +95,11 @@ static void load_str(char **str, char *value)
 {
     if (value) {
 	sanitize_str(value);
-	*str = malloc(strlen(value)+1);
-	strcpy(*str, value);
-    }
-    else {
+	*str = strdup(value);
+    } else {
 	/* if the value for this parameter is NULL, just initialize it
 	 * to an empty string */
-	*str = malloc(1);
-	strcpy(*str, "");
+	*str = strdup("");
     }
 }
 
@@ -136,7 +134,7 @@ static int load_parameter(config_t config, const char *line)
 
     /* strtok changes the original string, which we may not be
      * expecting at other points of the program */
-    strcpy(buf, line);
+    snprintf(buf, sizeof(buf), "%s", line);
     param = strtok(buf, delim);
     /* make sure there are no spaces */
     sanitize_str(param);

@@ -131,7 +131,7 @@ extern int run_health_checks(config_t config, char *result, size_t size)
 	return 0;
     }
 
-    strcpy(result, STR_ALL_CHECKS_SUCCESSFUL);
+    snprintf(result, size, "%s", STR_ALL_CHECKS_SUCCESSFUL);
     PQfinish(pg_conn);
     return 1;
 }

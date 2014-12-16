@@ -1,3 +1,4 @@
 * Check that all required parameters (configuration file) are successfully loaded
 * Write tests for edge cases of config_parser
 * Add tests for parsing custom checks on the configuration file
+* Check for possible buffer overflows with strcpy()/sprintf()

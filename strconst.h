@@ -2,7 +2,7 @@
 #define STRCONST_H_
 
 
-#define MAX_STR 128
+#define MAX_STR 256
 #define MAX_STR_CFG 1024
 #define MAX_STR_HTML 4096
 
@@ -26,6 +26,7 @@
 #define STR_CFG_PARSE_ERROR_FMT "Failed to parse line '%s'\n"
 #define STR_CFG_PARSE_SUCCESS_FMT "Successfully parsed line '%s'\n"
 #define STR_DB_CONNECTION_ERROR "Failed to connect to the database\n"
+#define STR_HEALTH_CHECK_ERROR_DETAIL_FMT "Check failed: '%s %s %s'. Return value was %s\n"
 #define STR_HEALTH_CHECK_ERROR_FMT "Check failed: '%s %s %s'\n"
 #define STR_HEALTH_CHECK_SUCCESS_FMT "Check succeeded: '%s %s %s'\n"
 #define STR_ALL_CHECKS_SUCCESSFUL "OK"

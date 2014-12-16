@@ -59,10 +59,11 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
 
     /* make sure the error message is written to the result string */
     if (! success)
-	snprintf(result, size, STR_HEALTH_CHECK_ERROR_FMT,
+	snprintf(result, size, STR_HEALTH_CHECK_ERROR_DETAIL_FMT,
 		 CUSTOM_CHECK_QUERY(check),
 		 CUSTOM_CHECK_OPERATOR(check),
-		 CUSTOM_CHECK_RESULT(check));
+		 CUSTOM_CHECK_RESULT(check),
+		 query_result);
 
     PQclear(pg_result);
     return success;

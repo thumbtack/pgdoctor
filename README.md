@@ -12,6 +12,8 @@ Simple, lightweight web service to perform health checks on PostgreSQL instances
 
   * Run tests
 
+    Edit `tests/pgdoctor.cfg`
+
     `make check`
 
   * Install

@@ -21,8 +21,9 @@ extern void sanitize_str(char *str)
     /* find the first occurrence of # to ignore everything that
      * follows */
     ignore_after = strchr(str, COMMENT_CHR);
-    if (! ignore_after)
+    if (! ignore_after) {
 	ignore_after = str+strlen(str);
+    }
     /* move back 1 chr (either the comment mark or \0) */
     ignore_after--;
     /* ignore any whitespace before the comment */
@@ -52,13 +53,15 @@ static custom_check_t parse_custom_check(const char *line)
 
     snprintf(buf, sizeof(buf), "%s", line);
     query = strtok(buf, delim);
-    if (! query)
+    if (! query) {
 	return NULL;
+    }
     operator = strtok(NULL, delim);
     if (operator) {
 	expected = strtok(NULL, delim);
-	if (! expected)
+	if (! expected) {
 	    return NULL;
+	}
 	sanitize_str(operator);
 	sanitize_str(expected);
 	return custom_check_create(query, operator, expected);
@@ -76,8 +79,9 @@ static int get_param_type(const char *str)
     } config_param[] = { MK_CONFIG_LIST(MK_CONFIG_PAIR) };
 
     for (i = 0; i < N_CONFIG_PARAMS; i++) {
-	if (strcasecmp(str, config_param[i].param_str) == 0)
+	if (strcasecmp(str, config_param[i].param_str) == 0) {
 	    return config_param[i].param_const;
+	}
     }
 
     /* if everything else failed, let's assume it's a custom health
@@ -115,8 +119,9 @@ static int append_custom_check(config_t config, custom_check_t custom_check)
     CHECKS_LIST_CHECK(new_check) = custom_check;
     CHECKS_LIST_NEXT(new_check) = NULL;
 
-    if (! checks_list)
+    if (! checks_list) {
 	CFG_CUSTOM_CHECKS(config) = new_check;
+    }
     else {
 	while (CHECKS_LIST_NEXT(checks_list))
 	    checks_list = CHECKS_LIST_NEXT(checks_list);
@@ -140,10 +145,11 @@ static int load_parameter(config_t config, const char *line)
     sanitize_str(param);
     param_type = get_param_type(param);
     if (param_type == CUSTOM_CHECK) {
-	if ((custom_check=parse_custom_check(line)))
+	if ((custom_check=parse_custom_check(line))) {
 	    return append_custom_check(config, custom_check);
-	else
+	} else {
 	    return 0;
+	}
     } else {
 	value = strtok(NULL, delim);
 	switch(param_type)
@@ -210,9 +216,9 @@ extern config_t config_parse(const char *file_path)
     	    if (! load_parameter(config, line)) {
 		logger_write(LOG_CRIT, STR_CFG_PARSE_ERROR_FMT, line);
 		return NULL;
-	    }
-	    else
+	    } else {
 		logger_write(LOG_INFO, STR_CFG_PARSE_SUCCESS_FMT, line);
+	    }
     	}
     }
 

@@ -23,12 +23,14 @@ static int get_facility(config_t config)
 	char * facility_str;
     } facility[] = { MK_LOGGER_LIST(MK_LOGGER_PAIR) };
 
-    if (! CFG_SYSLOG_FACILITY(config))
+    if (! CFG_SYSLOG_FACILITY(config)) {
 	return -1;
+    }
 
     for (i = 0; i < 8; i++) {
-    	if (strcasecmp(CFG_SYSLOG_FACILITY(config), facility[i].facility_str) == 0)
+    	if (strcasecmp(CFG_SYSLOG_FACILITY(config), facility[i].facility_str) == 0) {
     	    return facility[i].facility_const;
+	}
     }
 
     /* the facility is not local0..local7 */

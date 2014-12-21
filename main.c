@@ -123,9 +123,9 @@ int main(int argc, char *argv[])
 	    tv.tv_sec = mhd_timeout / 1000;
 	    tv.tv_usec = (mhd_timeout - (tv.tv_sec * 1000)) * 1000;
 	    tvp = &tv;
-	}
-	else
+	} else {
 	    tvp = NULL;
+	}
 	select(max + 1, &rs, &ws, &es, tvp);
 	MHD_run(http_daemon);
     }

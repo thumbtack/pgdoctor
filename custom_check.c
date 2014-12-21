@@ -37,31 +37,37 @@ static void set_check_parameter(char **param, const char *value)
 
 extern void custom_check_set_query(custom_check_t check, char *query)
 {
-    if (check)
+    if (check) {
 	set_check_parameter(&CUSTOM_CHECK_QUERY(check), query);
+    }
 }
 
 extern void custom_check_set_result(custom_check_t check, char *expected_result)
 {
-    if (check)
+    if (check) {
 	set_check_parameter(&CUSTOM_CHECK_RESULT(check), expected_result);
+    }
 }
 
 extern void custom_check_set_operator(custom_check_t check, char *operator)
 {
-    if (check)
+    if (check) {
 	set_check_parameter(&CUSTOM_CHECK_OPERATOR(check), operator);
+    }
 }
 
 extern void custom_check_destroy(custom_check_t check)
 {
     if (check) {
-	if (CUSTOM_CHECK_QUERY(check))
+	if (CUSTOM_CHECK_QUERY(check)) {
 	    free(CUSTOM_CHECK_QUERY(check));
-	if (CUSTOM_CHECK_RESULT(check))
+	}
+	if (CUSTOM_CHECK_RESULT(check)) {
 	    free(CUSTOM_CHECK_RESULT(check));
-	if (CUSTOM_CHECK_OPERATOR(check))
+	}
+	if (CUSTOM_CHECK_OPERATOR(check)) {
 	    free(CUSTOM_CHECK_OPERATOR(check));
+	}
     }
     free(check);
 }

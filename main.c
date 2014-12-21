@@ -78,8 +78,14 @@ int main(int argc, char *argv[])
     unsigned MHD_LONG_LONG mhd_timeout;
     config_t config;
 
-    /* parse configuration file */
-    config = config_parse(CONFIG_FILE);
+    /* parse configuration file; allow a single command line argument
+     * with the path to the configuration file */
+    if (argc == 2) {
+	config = config_parse(argv[1]);
+    } else {
+	config = config_parse(CONFIG_FILE);
+    }
+
     if (! config) {
 	fprintf(stderr, "Failed to parse configuration file: %s\n", CONFIG_FILE);
 	return 1;

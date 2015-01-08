@@ -15,6 +15,11 @@ else
 CFLAGS += -O3
 endif
 
+VALGRIND_EXISTS := $(shell valgrind --version 2>/dev/null)
+ifdef VALGRIND_EXISTS
+	VALGRIND = valgrind --leak-check=full
+endif
+
 $(BIN): main.c $(OBJECTS)
 	$(CC) $(CFLAGS) $^ -o $(BIN) $(LDFLAGS)
 
@@ -34,5 +39,5 @@ clean:
 
 check: tests/test_custom_checks.c $(OBJECTS)
 	$(CC) $(CFLAGS)  $^ -o $(BIN_TEST) $(LDFLAGS) -lcheck -pthread -lrt -lm
-	./$(BIN_TEST)
+	$(VALGRIND) ./$(BIN_TEST)
 	rm -f ./$(BIN_TEST)

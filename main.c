@@ -10,7 +10,7 @@
 
 
 /* used to signal stop; is updated by the SIGTERM handler */
-int glbl_stop = 0;
+int global_stop = 0;
 
 
 void create_html_page(char *page, size_t size, const char *body)
@@ -63,7 +63,7 @@ void graceful_shutdown(int sig)
 {
     /* just change the global variable; there are no race conditions
      * so this will safely break the loop in main() */
-    glbl_stop = 1;
+    global_stop = 1;
 }
 
 int main(int argc, char *argv[])
@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
     }
 
     /* never terminates (other than by signals, such as CTRL-C). */
-    while (! glbl_stop) {
+    while (! global_stop) {
 	max = 0;
 	FD_ZERO(&rs);
 	FD_ZERO(&ws);

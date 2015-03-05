@@ -68,6 +68,6 @@ extern void custom_check_destroy(custom_check_t check)
 	if (CUSTOM_CHECK_OPERATOR(check)) {
 	    free(CUSTOM_CHECK_OPERATOR(check));
 	}
+	free(check);
     }
-    free(check);
 }

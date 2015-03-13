@@ -27,11 +27,15 @@
 /* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 
+#define _XOPEN_SOURCE 500 /* for usleep */
+
+
 #include <stdio.h>
 #include <string.h>
 #include <signal.h>
-#include <libpq-fe.h>
+#include <unistd.h>
 #include <microhttpd.h>
+#include <libpq-fe.h>
 #include "config_parser.h"
 #include "logger.h"
 #include "run_checks.h"
@@ -137,26 +141,11 @@ int main(int argc, char *argv[])
 	return 1;
     }
 
-    /* never terminates (other than by signals, such as CTRL-C). */
+    /* the server daemon runs in the background in its own thread, so
+     * the execution flow in our main function would contine right
+     * after the call and the program would exit */
     while (! global_stop) {
-	max = 0;
-	FD_ZERO(&rs);
-	FD_ZERO(&ws);
-	FD_ZERO(&es);
-	if (MHD_get_fdset(http_daemon, &rs, &ws, &es, &max) != MHD_YES) {
-	    /* fatal internal error */
-	    logger_write(LOG_CRIT, "Failed to obtain select() sets\n");
-	    break;
-	}
-	if (MHD_get_timeout(http_daemon, &mhd_timeout) == MHD_YES) {
-	    tv.tv_sec = mhd_timeout / 1000;
-	    tv.tv_usec = (mhd_timeout - (tv.tv_sec * 1000)) * 1000;
-	    tvp = &tv;
-	} else {
-	    tvp = NULL;
-	}
-	select(max + 1, &rs, &ws, &es, tvp);
-	MHD_run(http_daemon);
+      usleep(500000);
     }
 
     /* cleanup */

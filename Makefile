@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -pedantic -std=c99 -I$(shell pg_config --includedir)
+CFLAGS = -Wall -pedantic -std=c99 -I$(shell pg_config --includedir) -L$(shell pg_config --libdir)
 LDFLAGS = -lmicrohttpd -lpq
 
 OBJECTS = $(filter-out main.o,$(patsubst %.c,%.o,$(wildcard *.c)))

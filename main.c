@@ -102,13 +102,6 @@ void graceful_shutdown(int sig)
 int main(int argc, char *argv[])
 {
     struct MHD_Daemon *http_daemon;
-    struct timeval tv;
-    struct timeval *tvp;
-    fd_set rs;
-    fd_set ws;
-    fd_set es;
-    int max;
-    unsigned MHD_LONG_LONG mhd_timeout;
     config_t config;
 
     /* parse configuration file; allow a single command line argument

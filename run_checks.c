@@ -65,6 +65,14 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
     	return 0;
     }
 
+    /* SELECT command that happens to retrieve zero rows still shows
+       PGRES_TUPLES_OK */
+    if (PQntuples(pg_result) != 1) {
+        pg_fail(pg_conn, result, size);
+        PQclear(pg_result);
+        return 0;
+    }
+
     /* we only expect one field with one result */
     query_result = PQgetvalue(pg_result, 0, 0);
 

@@ -31,7 +31,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <libpq-fe.h>
-#include "config_parser.h"
 #include "logger.h"
 #include "strconst.h"
 
@@ -60,8 +59,8 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
 
     /* without a result set there's no point on proceeding */
     if (PQresultStatus(pg_result) != PGRES_TUPLES_OK) {
-	pg_fail(pg_conn, result, size);
-	PQclear(pg_result);
+		pg_fail(pg_conn, result, size);
+		PQclear(pg_result);
     	return 0;
     }
 
@@ -79,18 +78,18 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
     /* an empty string means that there is nothing to compare to, so
      * the check fails */
     if (strlen(query_result) == 0) {
-	snprintf(result, size, STR_QUERY_FAILED_FMT, CUSTOM_CHECK_QUERY(check));
-	PQclear(pg_result);
-	return 0;
+		snprintf(result, size, STR_QUERY_FAILED_FMT, CUSTOM_CHECK_QUERY(check));
+		PQclear(pg_result);
+		return 0;
     }
 
     /* compare the query's result with the expected value */
     /* = compares as a string */
     if (strcmp(CUSTOM_CHECK_OPERATOR(check), "=") == 0)
-	success = (strcmp(query_result, CUSTOM_CHECK_RESULT(check)) == 0);
+		success = (strcmp(query_result, CUSTOM_CHECK_RESULT(check)) == 0);
     /* < and > compare as floating point values */
     if (strcmp(CUSTOM_CHECK_OPERATOR(check), "<") == 0)
-	success = (atof(query_result) < atof(CUSTOM_CHECK_RESULT(check)));
+		success = (atof(query_result) < atof(CUSTOM_CHECK_RESULT(check)));
     if (strcmp(CUSTOM_CHECK_OPERATOR(check), ">") == 0)
     	success = (atof(query_result) > atof(CUSTOM_CHECK_RESULT(check)));
 
@@ -107,7 +106,7 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
 }
 
 static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
-			  char *result, size_t size)
+						  char *result, size_t size)
 {
     int success = 1;
     custom_check_t check;

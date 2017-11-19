@@ -38,6 +38,6 @@ clean:
 	rm -fr $(BIN) *.o
 
 check: tests/test_custom_checks.c $(OBJECTS)
-	$(CC) $(CFLAGS)  $^ -o $(BIN_TEST) $(LDFLAGS) -lcheck -pthread -lrt -lm
+	$(CC) $(CFLAGS)  $^ -o $(BIN_TEST) $(LDFLAGS) -lcheck -lsubunit -pthread -lrt -lm
 	$(VALGRIND) ./$(BIN_TEST)
 	rm -f ./$(BIN_TEST)

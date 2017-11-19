@@ -42,6 +42,7 @@
 #endif
 
 #define COMMENT_CHR '#'
+#define DELIMITER_CHR "="
 
 #define STR_PG_CONN_INFO_FMT "host=%s port=%d dbname=%s user=%s " \
                              "password=%s connect_timeout=%d"

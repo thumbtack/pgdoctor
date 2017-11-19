@@ -165,14 +165,14 @@ static int append_custom_check(config_t config, custom_check_t custom_check)
 
 static int load_parameter(config_t config, const char *line)
 {
-    char *param, *value, *delim = "=", buf[MAX_STR_CFG];
+    char *param, *value, buf[MAX_STR_CFG];
     int param_type;
     custom_check_t custom_check;
 
     /* strtok changes the original string, which we may not be
      * expecting at other points of the program */
     snprintf(buf, sizeof(buf), "%s", line);
-    param = strtok(buf, delim);
+    param = strtok(buf, DELIMITER_CHR);
     /* make sure there are no spaces */
     sanitize_str(param);
     param_type = get_param_type(param);
@@ -183,7 +183,7 @@ static int load_parameter(config_t config, const char *line)
             return 0;
         }
     } else {
-        value = strtok(NULL, delim);
+        value = strtok(NULL, DELIMITER_CHR);
         switch(param_type)
         {
         case HTTP_PORT:

@@ -83,4 +83,4 @@ extern void config_cleanup(config_t config);
 extern void config_show(config_t config);
 
 
-#endif                          /* CONFIG_PARSER_H_ */
+#endif				/* CONFIG_PARSER_H_ */

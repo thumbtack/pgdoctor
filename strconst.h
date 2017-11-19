@@ -62,4 +62,4 @@
 #define STR_ALL_CHECKS_SUCCESSFUL "OK"
 
 
-#endif /* STRCONST_H_ */
+#endif				/* STRCONST_H_ */

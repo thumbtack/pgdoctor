@@ -37,4 +37,4 @@
 extern int run_health_checks(config_t config, char *result, size_t size);
 
 
-#endif /* RUN_CHECKS_H_ */
+#endif				/* RUN_CHECKS_H_ */

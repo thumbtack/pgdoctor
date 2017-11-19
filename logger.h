@@ -39,4 +39,4 @@ extern void logger_write(int priority, const char *fmt, ...);
 extern void logger_close();
 
 
-#endif /* LOGGER_H_ */
+#endif				/* LOGGER_H_ */

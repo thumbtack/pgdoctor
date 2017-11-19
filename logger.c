@@ -27,14 +27,13 @@
 /* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 
-#define _BSD_SOURCE /* for vsyslog */
+#define _DEFAULT_SOURCE /* for vsyslog */
+
 #include <stdio.h>
 #include <string.h>
-#include <strings.h>
 #include <syslog.h>
 #include <stdarg.h>
 #include "logger.h"
-#include "config_parser.h"
 
 
 #define MK_LOGGER_LIST(f) \

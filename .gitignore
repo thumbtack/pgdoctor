@@ -31,3 +31,6 @@
 *~
 pgdoctor
 pgdoctor_test
+
+# IDEs
+.idea

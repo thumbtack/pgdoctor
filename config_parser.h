@@ -82,4 +82,4 @@ extern config_t config_parse(const char *file_path);
 extern void config_cleanup(config_t config);
 
 
-#endif /* CONFIG_PARSER_H_ */
+#endif                          /* CONFIG_PARSER_H_ */

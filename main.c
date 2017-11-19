@@ -52,13 +52,13 @@ void create_html_page(char *page, size_t size, const char *body)
 }
 
 int answer_to_connection(void *cls,
-			 struct MHD_Connection *connection,
-			 const char *url,
-			 const char *method,
-			 const char *version,
-			 const char *upload_data,
-			 size_t *upload_data_size,
-			 void **con_cls)
+                         struct MHD_Connection *connection,
+                         const char *url,
+                         const char *method,
+                         const char *version,
+                         const char *upload_data,
+                         size_t *upload_data_size,
+                         void **con_cls)
 {
     char check_text[MAX_STR], page[MAX_STR_HTML];
     struct MHD_Response *response;
@@ -68,24 +68,24 @@ int answer_to_connection(void *cls,
 
     /* unless the request is a simple GET to /, just ignore it */
     if ((strcmp(method, "GET") == 0) && (strcmp(url, "/") == 0)) {
-	check_result = run_health_checks(configuration,
-					 check_text,
-					 sizeof(check_text));
-	status_code = check_result == 1 ? 200 : 500;
-	create_html_page(page, sizeof(page), check_text);
-	logger_write(LOG_NOTICE, STR_HTTP_RESPONSE_FMT,
-		     status_code, check_text);
+        check_result = run_health_checks(configuration,
+                                         check_text,
+                                         sizeof(check_text));
+        status_code = check_result == 1 ? 200 : 500;
+        create_html_page(page, sizeof(page), check_text);
+        logger_write(LOG_NOTICE, STR_HTTP_RESPONSE_FMT,
+                     status_code, check_text);
     } else {
-	snprintf(check_text, sizeof(check_text),
-		 STR_BAD_REQUEST_FMT, method, url);
-	status_code = 400;
-	create_html_page(page, sizeof(page), check_text);
-	logger_write(LOG_ERR, check_text);
+        snprintf(check_text, sizeof(check_text),
+                 STR_BAD_REQUEST_FMT, method, url);
+        status_code = 400;
+        create_html_page(page, sizeof(page), check_text);
+        logger_write(LOG_ERR, check_text);
     }
 
     /* prepare the HTTP response and send it to the client */
     response = MHD_create_response_from_buffer(strlen(page), (void*)page,
-					       MHD_RESPMEM_MUST_COPY);
+                                               MHD_RESPMEM_MUST_COPY);
     ret = MHD_queue_response(connection, status_code, response);
     MHD_destroy_response(response);
 
@@ -107,14 +107,14 @@ int main(int argc, char *argv[])
     /* parse configuration file; allow a single command line argument
      * with the path to the configuration file */
     if (argc == 2) {
-	config = config_parse(argv[1]);
+        config = config_parse(argv[1]);
     } else {
-	config = config_parse(CONFIG_FILE);
+        config = config_parse(CONFIG_FILE);
     }
 
     if (! config) {
-	fprintf(stderr, "Failed to parse configuration file: %s\n", CONFIG_FILE);
-	return 1;
+        fprintf(stderr, "Failed to parse configuration file: %s\n", CONFIG_FILE);
+        return 1;
     }
 
     /* setup the logger */
@@ -126,12 +126,12 @@ int main(int argc, char *argv[])
 
     /* run daemon */
     http_daemon = MHD_start_daemon(MHD_USE_SELECT_INTERNALLY,
-				   CFG_HTTP_PORT(config), NULL, NULL,
-				   &answer_to_connection, config,
-				   MHD_OPTION_END);
+                                   CFG_HTTP_PORT(config), NULL, NULL,
+                                   &answer_to_connection, config,
+                                   MHD_OPTION_END);
     if (http_daemon == NULL) {
-	logger_write(LOG_CRIT, "Failed to start HTTP daemon\n");
-	return 1;
+        logger_write(LOG_CRIT, "Failed to start HTTP daemon\n");
+        return 1;
     }
 
     /* the server daemon runs in the background in its own thread, so

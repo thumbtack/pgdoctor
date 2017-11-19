@@ -37,9 +37,9 @@ uninstall:
 clean:
 	rm -fr $(BIN) $(BIN_TEST) *.o
 
-check: tests/test_custom_checks.c $(OBJECTS)
+test: tests/test_custom_checks.c $(OBJECTS)
 	$(CC) $(CFLAGS)  $^ -o $(BIN_TEST) $(LDFLAGS) -lcheck -lsubunit -pthread -lrt -lm
 	./$(BIN_TEST)
 
-valgrind: check
+valgrind: test
 	$(VALGRIND) ./$(BIN_TEST)

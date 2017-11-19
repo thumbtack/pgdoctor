@@ -254,6 +254,21 @@ extern config_t config_parse(const char *file_path)
     return config;
 }
 
+static void free_custom_checks(checks_list_t current_check)
+{
+    custom_check_t check;
+
+    while (current_check) {
+        check = CHECKS_LIST_CHECK(current_check);
+
+        free(CUSTOM_CHECK_QUERY(check));
+        free(CUSTOM_CHECK_OPERATOR(check));
+        free(CUSTOM_CHECK_RESULT(check));
+
+        current_check = CHECKS_LIST_NEXT(current_check);
+    }
+}
+
 extern void config_cleanup(config_t config)
 {
     free(CFG_SYSLOG_FACILITY(config));
@@ -261,7 +276,8 @@ extern void config_cleanup(config_t config)
     free(CFG_PG_USER(config));
     free(CFG_PG_PASSWORD(config));
     free(CFG_PG_DATABASE(config));
-    /* TODO: free() custom checks */
+
+    free_custom_checks(CFG_CUSTOM_CHECKS(config));
     free(config);
 }
 

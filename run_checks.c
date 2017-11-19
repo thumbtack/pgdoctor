@@ -35,7 +35,6 @@
 #include "strconst.h"
 
 
-
 /* write the error string to `result` and terminate the connection
  * gracefully */
 static void pg_fail(PGconn *pg_conn, char *result, size_t size)
@@ -132,7 +131,7 @@ static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
 }
 
 /* top level health check: connects to the DB and runs all checks */
-/* returns 0 on pg_failure and 1 on sucess */
+/* returns 0 on pg_failure and 1 on success */
 /* a string with the description of the error (or "OK") is copied to
  * `result` */
 extern int run_health_checks(config_t config, char *result, size_t size)

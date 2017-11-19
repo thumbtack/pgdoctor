@@ -37,12 +37,18 @@
 
 START_TEST(test_sanitize_str)
 {
-    char empty_line[4][100] = {"", "# to ignore", " # to ignore  ", " # to ignore  \n"};
-    char foo_line[4][100] = {"foo = 1", "  foo = 1  ", " foo = 1 # yada, yada  ", " foo = 1 # yada, yada  \n"};
+#define N_SANITIZE_STR_TESTS  4
+
+    char empty_line[N_SANITIZE_STR_TESTS][100] = {"", "# to ignore",
+                                                  " # to ignore  ",
+                                                  " # to ignore  \n"};
+    char foo_line[N_SANITIZE_STR_TESTS][100] = {"foo = 1", "  foo = 1  ",
+                                                " foo = 1 # yada, yada  ",
+                                                " foo = 1 # yada, yada  \n"};
     int i;
 
     /* test config lines cleanup */
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < N_SANITIZE_STR_TESTS; i++) {
         sanitize_str(empty_line[i]);
         ck_assert_str_eq(empty_line[i], "");
         sanitize_str(foo_line[i]);

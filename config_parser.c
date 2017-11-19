@@ -45,17 +45,20 @@
 extern void sanitize_str(char *str)
 {
     char *ignore_after, *start_from = str;
-    int length;
+    size_t length;
 
     /* find the first occurrence of # to ignore everything that
      * follows */
     ignore_after = strchr(str, COMMENT_CHR);
-    if (! ignore_after) {
-        ignore_after = str+strlen(str);
-    }
-    /* move back 1 chr (either the comment mark or \0) */
-    ignore_after--;
+    if (ignore_after)
+        // terminate the string at the beginning of the comment
+        *ignore_after = '\0';
+    else
+        /* use the whole string */
+        ignore_after = str + strlen(str);
+
     /* ignore any whitespace before the comment */
+    ignore_after--;
     while (isspace(*ignore_after) && ignore_after >= str)
         ignore_after--;
 

@@ -34,6 +34,50 @@
 #include "../config_parser.h"
 #include "../run_checks.h"
 
+
+START_TEST(test_sanitize_str)
+{
+    char empty_line[4][100] = {"", "# to ignore", " # to ignore  ", " # to ignore  \n"};
+    char foo_line[4][100] = {"foo = 1", "  foo = 1  ", " foo = 1 # yada, yada  ", " foo = 1 # yada, yada  \n"};
+    int i;
+
+    /* test config lines cleanup */
+    for (i = 0; i < 3; i++) {
+        sanitize_str(empty_line[i]);
+        ck_assert_str_eq(empty_line[i], "");
+        sanitize_str(foo_line[i]);
+        ck_assert_str_eq(foo_line[i], "foo = 1");
+    }
+}
+END_TEST
+
+START_TEST(test_configparser)
+{
+        config_t config;
+
+        /* make sure it fails when the config file doesn't exist */
+        config = config_parse("doesnt_exist");
+        ck_assert(config == NULL);
+
+        /* this being hardcoded doesn't feel right, but there are more
+         * important things to do right now */
+        /* doesn't fail with an existing, statically correct, file */
+        config = config_parse("tests/pgdoctor.cfg");
+        ck_assert(config != NULL);
+        ck_assert_int_eq(CFG_HTTP_PORT(config), 8071);
+        ck_assert_str_eq(CFG_SYSLOG_FACILITY(config), "local7");
+        ck_assert_str_eq(CFG_PG_HOST(config), "localhost");
+        ck_assert_int_eq(CFG_PG_PORT(config), 5432);
+        ck_assert_str_eq(CFG_PG_USER(config), "postgres");
+        ck_assert_str_eq(CFG_PG_PASSWORD(config), "");
+        ck_assert_str_eq(CFG_PG_DATABASE(config), "postgres");
+        ck_assert_int_eq(CFG_PG_TIMEOUT(config), 3);
+
+        /* make sure to cleanup */
+        config_cleanup(config);
+}
+END_TEST
+
 START_TEST(test_custom_check)
 {
     custom_check_t check;
@@ -57,44 +101,6 @@ START_TEST(test_custom_check)
 
     /* make sure to cleanup */
     custom_check_destroy(check);
-}
-END_TEST
-
-START_TEST(test_configparser)
-{
-    config_t config;
-    char empty_line[4][100] = {"", "# to ignore", " # to ignore  "};
-    char foo_line[4][100] = {"foo = 1", "  foo = 1  ", " foo = 1 # yada, yada  "};
-    int i;
-
-    /* test config lines cleanup */
-    for (i=0; i<3; i++) {
-        sanitize_str(empty_line[i]);
-        ck_assert_str_eq(empty_line[i], "");
-        sanitize_str(foo_line[i]);
-        ck_assert_str_eq(foo_line[i], "foo = 1");
-    }
-
-    /* make sure it fails when the config file doesn't exist */
-    config = config_parse("doesnt_exist");
-    ck_assert(config == NULL);
-
-    /* this being hardcoded doesn't feel right, but there are more
-     * important things to do right now */
-    /* doesn't fail with an existing, statically correct, file */
-    config = config_parse("tests/pgdoctor.cfg");
-    ck_assert(config != NULL);
-    ck_assert_int_eq(CFG_HTTP_PORT(config), 8071);
-    ck_assert_str_eq(CFG_SYSLOG_FACILITY(config), "local7");
-    ck_assert_str_eq(CFG_PG_HOST(config), "localhost");
-    ck_assert_int_eq(CFG_PG_PORT(config), 5432);
-    ck_assert_str_eq(CFG_PG_USER(config), "postgres");
-    ck_assert_str_eq(CFG_PG_PASSWORD(config), "");
-    ck_assert_str_eq(CFG_PG_DATABASE(config), "postgres");
-    ck_assert_int_eq(CFG_PG_TIMEOUT(config), 3);
-
-    /* make sure to cleanup */
-    config_cleanup(config);
 }
 END_TEST
 
@@ -128,21 +134,26 @@ END_TEST
 
 int main(void)
 {
-
-    Suite *s1 = suite_create("Core");
-    TCase *tc1_1 = tcase_create("Core");
-    SRunner *sr = srunner_create(s1);
     int nf;
 
-    suite_add_tcase(s1, tc1_1);
-    tcase_add_test(tc1_1, test_custom_check);
-    tcase_add_test(tc1_1, test_configparser);
-    tcase_add_test(tc1_1, test_run_checks);
-    tcase_add_test(tc1_1, test_failed_run_checks);
+    Suite *s = suite_create("pgDoctor");
+    TCase *tc_config_parser = tcase_create("config_parser");
+    TCase *tc_custom_checks = tcase_create("Core");
+    SRunner *sr = srunner_create(s);
+
+    suite_add_tcase(s, tc_config_parser);
+    tcase_add_test(tc_config_parser, test_sanitize_str);
+    tcase_add_test(tc_config_parser, test_configparser);
+
+    suite_add_tcase(s, tc_custom_checks);
+    tcase_add_test(tc_custom_checks, test_custom_check);
+    tcase_add_test(tc_custom_checks, test_run_checks);
+    tcase_add_test(tc_custom_checks, test_failed_run_checks);
 
     srunner_run_all(sr, CK_NORMAL);
     nf = srunner_ntests_failed(sr);
-    srunner_free(sr);
-    return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 
+    srunner_free(sr);
+    
+    return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

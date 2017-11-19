@@ -27,7 +27,9 @@
 /* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 
-#define _BSD_SOURCE
+#define _DEFAULT_SOURCE
+#define _POSIX_C_SOURCE 200809L /* for strdup */
+
 #include "custom_check.h"
 #include <stdio.h>
 #include <string.h>

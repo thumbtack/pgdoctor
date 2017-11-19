@@ -27,15 +27,15 @@
 /* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 
-#define _BSD_SOURCE
+#define _DEFAULT_SOURCE
+#define _POSIX_C_SOURCE 200809L /* for strdup */
+
 #include "config_parser.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include <ctype.h>
 #include <errno.h>
-#include <libpq-fe.h>
 #include "logger.h"
 #include "strconst.h"
 

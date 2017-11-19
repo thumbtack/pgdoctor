@@ -69,10 +69,10 @@ START_TEST(test_configparser)
 
     /* test config lines cleanup */
     for (i=0; i<3; i++) {
-	sanitize_str(empty_line[i]);
-	ck_assert_str_eq(empty_line[i], "");
-	sanitize_str(foo_line[i]);
-	ck_assert_str_eq(foo_line[i], "foo = 1");
+        sanitize_str(empty_line[i]);
+        ck_assert_str_eq(empty_line[i], "");
+        sanitize_str(foo_line[i]);
+        ck_assert_str_eq(foo_line[i], "foo = 1");
     }
 
     /* make sure it fails when the config file doesn't exist */

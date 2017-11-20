@@ -55,17 +55,17 @@ is created under `/etc/pgdoctor.cfg`. Each setting is preceded by a comment desc
 ### Target PostgreSQL instance
 | Parameter        | Description           | Default  |
 | ------------- |-------------|-----|
-| pg_host | Host name of the instance | `localhost` |
-| pg_port | Port on which the server is listening | 5432 |
-| pg_user | User to connect with | `postgres` |
-| pg_password | Password to use with `pg_user` | *empty* |
-| pg_database | Name of the database to connect to | `postgres` |
+| `pg_host` | Host name of the instance | `localhost` |
+| `pg_port` | Port on which the server is listening | 5432 |
+| `pg_user` | User to connect with | `postgres` |
+| `pg_password` | Password to use with `pg_user` | *empty* |
+| `pg_database` | Name of the database to connect to | `postgres` |
 
 ### Health checks
 | Parameter        | Description           | Default  |
 | ------------- |-------------|-----|
-| pg_connection_timeout | Timeout (seconds) when connecting to PostgreSQL | 3 |
-| pg_max_replication_lag | Maximum acceptable delay (seconds) on streaming replication | -1 (disabled) |
+| `pg_connection_timeout` | Timeout (seconds) when connecting to PostgreSQL | 3 |
+| `pg_max_replication_lag` | Maximum acceptable delay (seconds) on streaming replication | -1 (disabled) |
 
 #### Custom health checks
 pgDoctor supports the definition of custom health checks in the form of arbitrary SQL queries &mdash; one

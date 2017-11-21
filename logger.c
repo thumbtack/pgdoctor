@@ -82,6 +82,7 @@ extern void logger_write(int priority, const char *fmt, ...) {
 
     va_start(ap, fmt);
     vsyslog(priority, fmt, ap);
+    va_end(ap);
 }
 
 extern void logger_close()

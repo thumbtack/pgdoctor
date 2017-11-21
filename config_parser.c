@@ -49,7 +49,7 @@ extern void sanitize_str(char *str)
 
     /* find the first occurrence of # to ignore everything that
      * follows */
-    ignore_after = strchr(str, COMMENT_CHR);
+    ignore_after = strchr(str, CFG_COMMENT_CHR);
     if (ignore_after)
         // terminate the string at the beginning of the comment
         *ignore_after = '\0';
@@ -172,7 +172,7 @@ static int load_parameter(config_t config, const char *line)
     /* strtok changes the original string, which we may not be
      * expecting at other points of the program */
     snprintf(buf, sizeof(buf), "%s", line);
-    param = strtok(buf, DELIMITER_CHR);
+    param = strtok(buf, CFG_DELIMITER_CHR);
     /* make sure there are no spaces */
     sanitize_str(param);
     param_type = get_param_type(param);
@@ -183,7 +183,7 @@ static int load_parameter(config_t config, const char *line)
             return 0;
         }
     } else {
-        value = strtok(NULL, DELIMITER_CHR);
+        value = strtok(NULL, CFG_DELIMITER_CHR);
         switch(param_type)
         {
         case HTTP_PORT:

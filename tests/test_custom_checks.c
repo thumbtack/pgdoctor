@@ -59,28 +59,28 @@ END_TEST
 
 START_TEST(test_configparser)
 {
-        config_t config;
+    config_t config;
 
-        /* make sure it fails when the config file doesn't exist */
-        config = config_parse("doesnt_exist");
-        ck_assert(config == NULL);
+    /* make sure it fails when the config file doesn't exist */
+    config = config_parse("doesnt_exist");
+    ck_assert(config == NULL);
 
-        /* this being hardcoded doesn't feel right, but there are more
-         * important things to do right now */
-        /* doesn't fail with an existing, statically correct, file */
-        config = config_parse("tests/pgdoctor.cfg");
-        ck_assert(config != NULL);
-        ck_assert_int_eq(CFG_HTTP_PORT(config), 8071);
-        ck_assert_str_eq(CFG_SYSLOG_FACILITY(config), "local7");
-        ck_assert_str_eq(CFG_PG_HOST(config), "localhost");
-        ck_assert_int_eq(CFG_PG_PORT(config), 5432);
-        ck_assert_str_eq(CFG_PG_USER(config), "postgres");
-        ck_assert_str_eq(CFG_PG_PASSWORD(config), "");
-        ck_assert_str_eq(CFG_PG_DATABASE(config), "postgres");
-        ck_assert_int_eq(CFG_PG_TIMEOUT(config), 3);
+    /* this being hardcoded doesn't feel right, but there are more
+     * important things to do right now */
+    /* doesn't fail with an existing, statically correct, file */
+    config = config_parse("tests/pgdoctor.cfg");
+    ck_assert(config != NULL);
+    ck_assert_int_eq(CFG_HTTP_PORT(config), 8071);
+    ck_assert_str_eq(CFG_SYSLOG_FACILITY(config), "local7");
+    ck_assert_str_eq(CFG_PG_HOST(config), "localhost");
+    ck_assert_int_eq(CFG_PG_PORT(config), 5432);
+    ck_assert_str_eq(CFG_PG_USER(config), "postgres");
+    ck_assert_str_eq(CFG_PG_PASSWORD(config), "");
+    ck_assert_str_eq(CFG_PG_DATABASE(config), "postgres");
+    ck_assert_int_eq(CFG_PG_TIMEOUT(config), 3);
 
-        /* make sure to cleanup */
-        config_cleanup(config);
+    /* make sure to cleanup */
+    config_destroy(config);
 }
 END_TEST
 
@@ -120,7 +120,7 @@ START_TEST(test_run_checks)
     ck_assert_int_eq(run_health_checks(config, result, MAX_STR), 1);
 
     /* make sure to cleanup */
-    config_cleanup(config);
+    config_destroy(config);
 }
 END_TEST
 
@@ -134,7 +134,7 @@ START_TEST(test_failed_run_checks)
     ck_assert_int_eq(run_health_checks(config, result, MAX_STR), 0);
 
     /* make sure to cleanup */
-    config_cleanup(config);
+    config_destroy(config);
 }
 END_TEST
 

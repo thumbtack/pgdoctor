@@ -17,7 +17,7 @@ endif
 
 VALGRIND_EXISTS := $(shell valgrind --version 2>/dev/null)
 ifdef VALGRIND_EXISTS
-	VALGRIND = valgrind --leak-check=full
+	VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes
 endif
 
 $(BIN): main.c $(OBJECTS)
@@ -38,8 +38,8 @@ clean:
 	rm -fr $(BIN) $(BIN_TEST) *.o
 
 test: tests/test_custom_checks.c $(OBJECTS)
-	$(CC) $(CFLAGS)  $^ -o $(BIN_TEST) $(LDFLAGS) -lcheck -lsubunit -pthread -lrt -lm
+	$(CC) $(CFLAGS) $^ -o $(BIN_TEST) $(LDFLAGS) -lcheck -lsubunit -pthread -lrt -lm
 	./$(BIN_TEST)
 
 valgrind: test
-	$(VALGRIND) ./$(BIN_TEST)
+	CK_FORK=no $(VALGRIND) ./$(BIN_TEST)

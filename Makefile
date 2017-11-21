@@ -17,7 +17,7 @@ endif
 
 VALGRIND_EXISTS := $(shell valgrind --version 2>/dev/null)
 ifdef VALGRIND_EXISTS
-	VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes
+	VALGRIND = valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --suppressions=libcrypto.supp
 endif
 
 $(BIN): main.c $(OBJECTS)

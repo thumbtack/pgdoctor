@@ -160,6 +160,6 @@ int main(void)
     nf = srunner_ntests_failed(sr);
 
     srunner_free(sr);
-    
+
     return (nf == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

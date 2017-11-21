@@ -255,6 +255,8 @@ extern config_t config_parse(const char *file_path)
         }
     }
 
+    fclose(fp);
+    
     return config;
 }
 
@@ -277,7 +279,7 @@ extern void config_destroy(config_t config)
     free(CFG_PG_DATABASE(config));
 
     free_custom_checks(CFG_CUSTOM_CHECKS(config));
-    
+
     free(config);
 }
 

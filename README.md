@@ -80,9 +80,9 @@ evaluates to `true`.
 
 Conditional checks are of the form
 ```
-"QUERY" relop "VALUE"
+"QUERY" comparion_operator "VALUE"
 ```
-where `relop` is one of `<`, `>`, or `=`. `QUERY` is any valid SQL command 
+where `comparison_operator` is one of `<`, `>`, or `=`. `QUERY` is any valid SQL command 
 (surrounded by double-quotes), and `VALUE` (also surrounded by double-quotes) is the expected 
 result from `QUERY`. 
 

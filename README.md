@@ -97,3 +97,6 @@ used.
 
 *Conditional example &mdash; successful iff `on_rotation` equals `1`* 
 * `"SELECT on_rotation FROM maintenance WHERE hostname = 'production-replica3'" = "1"`
+
+## Contact
+* [pgdoctor](https://groups.google.com/forum/#!forum/pgdoctor) group &mdash; general discussion list.

@@ -59,11 +59,11 @@ extern void sanitize_str(char *str)
 
     /* ignore any whitespace before the comment */
     ignore_after--;
-    while (isspace(*ignore_after) && ignore_after >= str)
+    while (ignore_after >= str && isspace(*ignore_after))
         ignore_after--;
 
     /* ignore whitespace at the beginning of the string */
-    while (isspace(*start_from) && start_from < ignore_after)
+    while (start_from < ignore_after && isspace(*start_from))
         start_from++;
 
     /* size of the sanitized configuration str */
@@ -247,6 +247,7 @@ extern config_t config_parse(const char *file_path)
         if (strcmp(line, "") != 0) {
             if (! load_parameter(config, line)) {
                 logger_write(LOG_CRIT, STR_CFG_PARSE_ERROR_FMT, line);
+                free(config);
                 return NULL;
             } else {
                 logger_write(LOG_INFO, STR_CFG_PARSE_SUCCESS_FMT, line);
@@ -254,25 +255,22 @@ extern config_t config_parse(const char *file_path)
         }
     }
 
+    fclose(fp);
+    
     return config;
 }
 
-static void free_custom_checks(checks_list_t current_check)
+static void free_custom_checks(checks_list_t checks)
 {
-    custom_check_t check;
+    if (checks == NULL)
+        return;
 
-    while (current_check) {
-        check = CHECKS_LIST_CHECK(current_check);
-
-        free(CUSTOM_CHECK_QUERY(check));
-        free(CUSTOM_CHECK_OPERATOR(check));
-        free(CUSTOM_CHECK_RESULT(check));
-
-        current_check = CHECKS_LIST_NEXT(current_check);
-    }
+    free_custom_checks(CHECKS_LIST_NEXT(checks));
+    custom_check_destroy(CHECKS_LIST_CHECK(checks));
+    free(checks);
 }
 
-extern void config_cleanup(config_t config)
+extern void config_destroy(config_t config)
 {
     free(CFG_SYSLOG_FACILITY(config));
     free(CFG_PG_HOST(config));
@@ -281,6 +279,7 @@ extern void config_cleanup(config_t config)
     free(CFG_PG_DATABASE(config));
 
     free_custom_checks(CFG_CUSTOM_CHECKS(config));
+
     free(config);
 }
 

@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
     /* cleanup */
     MHD_stop_daemon(http_daemon);
     logger_close();
-    config_cleanup(config);
+    config_destroy(config);
 
     return 0;
 }

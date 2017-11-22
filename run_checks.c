@@ -41,8 +41,7 @@ static void pg_fail(PGconn *pg_conn, char *result, size_t size)
 {
     char *errormsg = PQerrorMessage(pg_conn);
 
-    /* if there one, save the error message from PG to `result` and
-     * gracefully terminate the DB connection */
+    /* save the error message from PG to `result` */
     if (errormsg)
         snprintf(result, size, "%s", errormsg);
 }
@@ -105,7 +104,7 @@ static int run_custom_check(PGconn *pg_conn, custom_check_t check,
 }
 
 static int run_all_checks(PGconn *pg_conn, checks_list_t checks_list,
-                                                  char *result, size_t size)
+                          char *result, size_t size)
 {
     int success = 1;
     custom_check_t check;
@@ -168,5 +167,6 @@ extern int run_health_checks(config_t config, char *result, size_t size)
 
     snprintf(result, size, "%s", STR_ALL_CHECKS_SUCCESSFUL);
     PQfinish(pg_conn);
+
     return 1;
 }

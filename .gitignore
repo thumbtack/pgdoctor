@@ -34,3 +34,6 @@ pgdoctor_test
 
 # IDEs
 .idea
+
+debian/pgdoctor
+debian/pgdoctor.debhelper.log

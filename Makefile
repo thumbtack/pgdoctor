@@ -26,13 +26,8 @@ $(BIN): main.c $(OBJECTS)
 %.o: %.c %.h $(OTHER)
 	$(CC) -c $(CFLAGS) $< -o $@
 
-install: $(BIN)
-	install -m 0755 $(BIN) $(PREFIX)
-	install -m 0600 $(CFG_FILE) /etc
-
-uninstall:
-	rm -f $(PREFIX)/$(BIN)
-	rm -f /etc/$(CFG_FILE)
+debian:
+	dpkg-buildpackage -uc -us
 
 clean:
 	rm -fr $(BIN) $(BIN_TEST) *.o

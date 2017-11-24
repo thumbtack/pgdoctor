@@ -1,0 +1,12 @@
+[Unit]
+Description=Unit for pgDoctor
+After=postgresql.service
+Requires=postgresql.service
+
+[Service]
+TimeoutStartSec=0
+Type=simple
+ExecStart=/usr/bin/pgdoctor
+
+[Install]
+WantedBy=multi-user.target

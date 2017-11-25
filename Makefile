@@ -26,6 +26,7 @@ $(BIN): main.c $(OBJECTS)
 %.o: %.c %.h $(OTHER)
 	$(CC) -c $(CFLAGS) $< -o $@
 
+.PHONY: debian
 debian:
 	dpkg-buildpackage -uc -us
 

@@ -1,7 +1,8 @@
 pgDoctor
 ========
 
-Simple, lightweight web service to perform health checks on PostgreSQL instances.
+Simple, lightweight, web service used to define and run custom health checks on PostgreSQL 
+instances.
 
 
 ## Dependencies
@@ -55,8 +56,8 @@ is created under `/etc/pgdoctor.cfg`. Each setting is preceded by a comment desc
 ### Target PostgreSQL instance
 | Parameter        | Description           | Default  |
 | ------------- |-------------|-----|
-| `pg_host` | Host name of the instance | `localhost` |
-| `pg_port` | Port on which the server is listening | 5432 |
+| `pg_host` | Host name of the instance pgDoctor will connect to | `localhost` |
+| `pg_port` | Port on which the target server is listening | 5432 |
 | `pg_user` | User to connect with | `postgres` |
 | `pg_password` | Password to use with `pg_user` | *empty* |
 | `pg_database` | Name of the database to connect to | `postgres` |

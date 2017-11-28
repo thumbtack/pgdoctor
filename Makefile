@@ -27,12 +27,16 @@ $(BIN): main.c $(OBJECTS)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 install: $(BIN)
-	install -m 0755 $(BIN) $(PREFIX)
-	install -m 0600 $(CFG_FILE) /etc
+	install -D -m 0755 $(BIN) $(DESTDIR)$(PREFIX)/$(BIN)
+	install -D -m 0600 $(CFG_FILE) $(DESTDIR)/etc/$(CFG_FILE)
 
 uninstall:
-	rm -f $(PREFIX)/$(BIN)
-	rm -f /etc/$(CFG_FILE)
+	rm -f $(DESTDIR)$(PREFIX)/$(BIN)
+	rm -f $(DESTDIR)/etc/$(CFG_FILE)
+
+.PHONY: debian
+debian:
+	dpkg-buildpackage -uc -us
 
 clean:
 	rm -fr $(BIN) $(BIN_TEST) *.o

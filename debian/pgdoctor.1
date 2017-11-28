@@ -1,0 +1,93 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" (C) Copyright 2014-2017 Marco Almeida <mfa@thumbtack.com>,
+.\"
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH pgDoctor 1 "2017"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+pgdoctor \- Custom health checks for PostgreSQL
+.SH SYNOPSIS
+.B pgdoctor
+.RI [ filename ]
+.SH DESCRIPTION
+This manual page documents briefly the
+.B pgdoctor
+service.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invode bold face and italics,
+.\" respectively.
+\fBpgdoctor\fP is a simple, lightweight, web service used to define
+and run custom health checks on PostgreSQL instances.
+.SH FILES
+The only (optional) argument \fBpgdoctor\fP accepts if the
+configuration file for runtime configuration options. It defaults to
+\fB/etc/pgdoctor.cfg\fP.
+.SH RUNTIME CONFIGURATION
+.TP
+.B http_port
+Port to listen on; defaults to \fI8071\fP
+.TP
+.B syslog_facility
+Syslog facility (local) to messages log to; defaults to \fIlocal7\fP
+.TP
+.B pg_host
+Host name of the instance \fBpgDoctor\fP will connect to; defaults to
+\fIlocalhost\fP
+.TP
+.B pg_gport
+Port on which the target server is listening; defaults to \fI5432\fP
+.TP
+.B pg_user
+User to connect with; defaults to \fIpostgres\fP
+.TP
+.B pg_password
+Password to use with pg_user; defaults to \fIempty\fP
+.TP
+.B pg_database
+Name of the database to connect to; defaults to \fIpostgres\fP
+.TP
+.B pg_connection_timeout
+Timeout (seconds) when connecting to PostgreSQL; defaults by \fI3\fP
+.TP
+.B pg_max_replication_lag
+Maximum acceptable delay (seconds) on streaming replication; defaults
+to \fI-1\fP (disabled)
+.SH EXAMPLES \(em CUSTOM HEALTH CHECKS
+Each of the following two SQL queries defines a custom health check
+that will succeed if and only if it is executed without any errors
+(notice the mandatory double quotes):
+.IP
+.nf
+"SELECT 1"
+.fi
+.IP
+.nf
+"SELECT NOW()"
+.fi
+.P
+The next one, more complex, custom health check includes a condition
+on the result of the SQL query (which must be exactly \fIone\fP
+field):
+.IP
+.nf
+"SELECT on_rotation FROM maintenance WHERE hostname = 'production-replica3'" = "1"
+.fi
+.P
+This check will succeed if and only if the value of the returned field
+\fBon_rotation\fP equals \fB1\fP.
+.SH SEE ALSO
+.BR https://github.com/thumbtack/pgdoctor

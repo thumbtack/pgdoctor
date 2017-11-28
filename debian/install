@@ -1,0 +1,3 @@
+pgdoctor usr/bin/
+pgdoctor.cfg etc/
+pgdoctor.service etc/systemd/system/

@@ -9,7 +9,7 @@ Vcs-Git: https://github.com/thumbtack/pgdoctor.git
 
 Package: pgdoctor
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-9.4 | postgresql-9.6 | postgresql-11
+Depends: ${shlibs:Depends}, ${misc:Depends}, postgresql-9.4 | postgresql-9.6 | postgresql-10 | postgresql-11
 Description: Custom health checks for PostgreSQL
  pgDoctor is a simple, lightweight, web service used to define and run custom
  health checks on PostgreSQL instances.

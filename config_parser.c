@@ -171,7 +171,7 @@ static int load_parameter(config_t config, const char *line)
             return 0;
         }
     } else {
-        value = strtok(NULL, CFG_DELIMITER_CHR);
+        value = strtok(NULL, "");
         switch(param_type)
         {
         case HTTP_PORT:
